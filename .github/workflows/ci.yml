@@ -1,0 +1,15 @@
+name: CI
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hustcer/setup-moonbit@v1.22
+      - run: moon version --all
+      - run: moon fmt --check
+      - run: moon check
+      - run: moon test
+      - run: moon build
