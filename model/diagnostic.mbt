@@ -135,6 +135,7 @@ pub(all) struct ParseOptions {
   max_records : Int
   max_payload : Int
   max_text_length : Int
+  max_warnings : Int
 } derive(Eq, Debug)
 
 ///|
@@ -147,6 +148,7 @@ pub fn ParseOptions::default() -> ParseOptions {
     max_records: 1000000,
     max_payload: 64 * 1024 * 1024,
     max_text_length: 256 * 1024 * 1024,
+    max_warnings: 1024,
   }
 }
 
@@ -160,7 +162,9 @@ pub fn ParseOptions::validate(self : ParseOptions) -> Unit raise FirmwareError {
     self.max_payload < 0 ||
     self.max_payload > 64 * 1024 * 1024 ||
     self.max_text_length < 0 ||
-    self.max_text_length > 256 * 1024 * 1024 {
+    self.max_text_length > 256 * 1024 * 1024 ||
+    self.max_warnings < 0 ||
+    self.max_warnings > 65536 {
     raise FirmwareError(
       diagnostic(InvalidOption, "parse limits outside supported bounds"),
     )

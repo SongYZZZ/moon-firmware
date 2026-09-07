@@ -230,6 +230,17 @@ pub fn parse_arguments(
   if options.contains("--fill") && format != RawBinary {
     raise usage_error("--fill applies to binary output")
   }
+  if options.contains("--max-output") && format != RawBinary {
+    raise usage_error("--max-output applies to binary output")
+  }
+  if format == RawBinary &&
+    (
+      options.contains("--record-length") ||
+      flags.contains("--lowercase") ||
+      flags.contains("--crlf")
+    ) {
+    raise usage_error("text writer options require HEX or SREC output")
+  }
   let mut conversion = @firmware.ConvertOptions::new(format)
   if options.get("--fill") is Some(value) {
     conversion = {

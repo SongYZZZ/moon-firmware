@@ -45,15 +45,6 @@ async fn read_input(path : String, config : Config) -> @model.FirmwareImage {
 }
 
 ///|
-/// Close staging data before rename so Windows never sees an open descriptor.
-async fn write_staging(path : String, bytes : Bytes) -> Unit {
-  let file = @fs.create(path, allow_existing=false, permission=0o644)
-  defer file.close()
-  file.write(bytes)
-  file.sync()
-}
-
-///|
 /// Same-directory staging protects existing output from conversion failures.
 async fn write_output(path : String, bytes : Bytes, force : Bool) -> Unit {
   if path.is_empty() || path.contains_char('\u0000') {
@@ -67,14 +58,23 @@ async fn write_output(path : String, bytes : Bytes, force : Bool) -> Unit {
     None => raise usage_error("cannot obtain random temporary file name")
   }
   let staging = path + ".moonfirmware-" + nonce + ".tmp"
+  let mut created = false
   try {
-    write_staging(staging, bytes)
+    {
+      let file = @fs.create(staging, allow_existing=false, permission=0o644)
+      created = true
+      // Close before rename; Windows cannot rename an open staging descriptor.
+      defer file.close()
+      file.write(bytes)
+      file.sync()
+    }
     @fs.rename(staging, path, replace=force)
   } catch {
     error => {
       // Cleanup is best-effort; preserve the primary write/rename failure.
       try {
-        if @fs.exists(staging) {
+        // A failed exclusive create must never remove someone else's file.
+        if created && @fs.exists(staging) {
           @fs.remove(staging)
         }
       } catch {

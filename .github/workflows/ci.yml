@@ -10,6 +10,7 @@ jobs:
       - uses: hustcer/setup-moonbit@v1.22
       - run: moon version --all
       - run: moon fmt --check
+      - run: moon update
       - run: moon check
       - run: moon test
       - run: moon build

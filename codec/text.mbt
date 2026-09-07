@@ -261,6 +261,10 @@ pub fn for_each_line(
       if !(options.mode == Permissive && skip) {
         visit({ text: body, location: { ..loc, column_offset: from, }, })
       }
+      // Comments also consume diagnostic space even though they are not records.
+      if warnings.length() > options.max_warnings {
+        raise loc.error(ResourceLimit, 1, "document exceeds warning limit")
+      }
       start = pos + 1
       line += 1
     } else if pos - start > options.max_line_length {

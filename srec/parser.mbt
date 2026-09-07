@@ -115,6 +115,9 @@ pub fn parse_document(
       raise error
     }
     let @model.FirmwareError(d) = error
+    if warnings.length() >= options.max_warnings {
+      raise loc.error(ResourceLimit, 1, "document exceeds warning limit")
+    }
     warnings.push(d)
   }
   {
