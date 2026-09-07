@@ -1,0 +1,7 @@
+import {
+  "moonbitlang/core/encoding/utf8",
+  "SongYZZZ/moon-firmware/model",
+  "SongYZZZ/moon-firmware/codec",
+  "SongYZZZ/moon-firmware/ihex",
+  "SongYZZZ/moon-firmware/srec",
+}
