@@ -1,0 +1,4 @@
+import {
+  "SongYZZZ/moon-firmware/model",
+  "SongYZZZ/moon-firmware/codec",
+}
