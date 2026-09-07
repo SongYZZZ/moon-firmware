@@ -48,7 +48,7 @@ test "rejected overlap is transactional" {
           code: AddressConflict,
           address: Some(11L),
           end_address: Some(12L),
-          ..,
+          ..
         }
       )
     ),

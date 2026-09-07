@@ -227,7 +227,7 @@ test "writer chooses width from entry even without data" {
 test "writer forced width refuses truncation" {
   let image = @model.FirmwareImage::from_binary(b"x", 65536L)
   try
-    encode(image, options={ ..WriterOptions::default(), address_width: Bits16 })
+    encode(image, options={ ..WriterOptions::default(), address_width: Bits16, })
   catch {
     @model.FirmwareError(d) => assert_eq(d.code, AddressOverflow)
   } noraise {

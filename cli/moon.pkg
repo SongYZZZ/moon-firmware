@@ -1,0 +1,14 @@
+import {
+  "SongYZZZ/moon-firmware/model",
+  "SongYZZZ/moon-firmware/codec",
+  "SongYZZZ/moon-firmware/firmware",
+  "SongYZZZ/moon-firmware/srec",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/io",
+  "moonbitlang/async/stdio",
+  "moonbitlang/core/env",
+}
+
+import {
+  "moonbitlang/async",
+} for "wbtest"

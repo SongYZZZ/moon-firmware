@@ -20,7 +20,7 @@ pub fn Record::new(
     record_type: Some(kind),
   }
   check_fields(kind, address, data.length(), location)
-  { kind, address, data }
+  { kind, address, data, }
 }
 
 ///|
@@ -71,7 +71,12 @@ pub fn parse_line(
   text : String,
   line? : Int = 1,
 ) -> Record raise @model.FirmwareError {
-  parse_at(text, { format: IntelHex, line, column_offset: 0, record_type: None })
+  parse_at(text, {
+    format: IntelHex,
+    line,
+    column_offset: 0,
+    record_type: None,
+  })
 }
 
 ///|
@@ -99,7 +104,7 @@ fn parse_at(
   }
   let count = bytes[0].to_int()
   let kind = bytes[3].to_int()
-  let location = { ..initial, record_type: Some(kind) }
+  let location = { ..initial, record_type: Some(kind), }
   if bytes.length() != count + 5 {
     raise location.error(
       InvalidLength,
@@ -116,5 +121,5 @@ fn parse_at(
   }
   let address = bytes[1].to_int() * 256 + bytes[2].to_int()
   check_fields(kind, address, count, location)
-  { kind, address, data: bytes[4:4 + count].to_owned() }
+  { kind, address, data: bytes[4:4 + count].to_owned(), }
 }

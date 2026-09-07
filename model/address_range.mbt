@@ -21,7 +21,7 @@ pub fn AddressRange::new(
       ),
     )
   }
-  { start, end }
+  { start, end, }
 }
 
 ///|
@@ -70,7 +70,7 @@ pub fn AddressRange::intersection(
   let start = self.start.max(other.start)
   let end = self.end.min(other.end)
   if start < end {
-    Some({ start, end })
+    Some({ start, end, })
   } else {
     None
   }
@@ -87,10 +87,10 @@ pub fn AddressRange::subtract(
     Some(overlap) => {
       let result = []
       if self.start < overlap.start {
-        result.push({ start: self.start, end: overlap.start })
+        result.push({ start: self.start, end: overlap.start, })
       }
       if overlap.end < self.end {
-        result.push({ start: overlap.end, end: self.end })
+        result.push({ start: overlap.end, end: self.end, })
       }
       result
     }

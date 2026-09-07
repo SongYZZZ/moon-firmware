@@ -219,7 +219,12 @@ pub fn for_each_line(
       if end > start && text[end - 1] == 13 {
         end -= 1
       }
-      let loc : Location = { format, line, column_offset: 0, record_type: None }
+      let loc : Location = {
+        format,
+        line,
+        column_offset: 0,
+        record_type: None,
+      }
       if end - start > options.max_line_length {
         raise loc.error(
           ResourceLimit,
@@ -254,12 +259,17 @@ pub fn for_each_line(
         warnings.push(d)
       }
       if !(options.mode == Permissive && skip) {
-        visit({ text: body, location: { ..loc, column_offset: from } })
+        visit({ text: body, location: { ..loc, column_offset: from, }, })
       }
       start = pos + 1
       line += 1
     } else if pos - start > options.max_line_length {
-      let loc : Location = { format, line, column_offset: 0, record_type: None }
+      let loc : Location = {
+        format,
+        line,
+        column_offset: 0,
+        record_type: None,
+      }
       raise loc.error(ResourceLimit, 1, "line exceeds configured length limit")
     }
     pos += 1

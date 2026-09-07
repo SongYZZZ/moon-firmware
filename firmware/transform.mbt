@@ -103,7 +103,10 @@ pub fn extract_range(
     memory: image.memory.slice(range),
     entry,
     warnings,
-    metadata: { ..@model.Metadata::new(Unknown), header: image.metadata.header },
+    metadata: {
+      ..@model.Metadata::new(Unknown),
+      header: image.metadata.header,
+    },
   }
 }
 
@@ -142,7 +145,10 @@ pub fn relocate(
     memory,
     entry,
     warnings,
-    metadata: { ..@model.Metadata::new(Unknown), header: image.metadata.header },
+    metadata: {
+      ..@model.Metadata::new(Unknown),
+      header: image.metadata.header,
+    },
   }
 }
 
@@ -178,7 +184,10 @@ pub fn remove_range(
     memory,
     entry,
     warnings,
-    metadata: { ..@model.Metadata::new(Unknown), header: image.metadata.header },
+    metadata: {
+      ..@model.Metadata::new(Unknown),
+      header: image.metadata.header,
+    },
   }
 }
 
@@ -209,6 +218,9 @@ pub fn fill_range(
   }
   {
     ..result,
-    metadata: { ..@model.Metadata::new(Unknown), header: image.metadata.header },
+    metadata: {
+      ..@model.Metadata::new(Unknown),
+      header: image.metadata.header,
+    },
   }
 }

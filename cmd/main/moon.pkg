@@ -1,5 +1,11 @@
-// import {
-//   "SongYZZZ/moon-firmware" @lib,
-// }
+import {
+  "moonbitlang/async",
+  "SongYZZZ/moon-firmware/cli",
+  "SongYZZZ/moon-firmware/model",
+  "moonbitlang/core/env",
+  "moonbitlang/async/stdio",
+  "moonbitlang/async/io",
+  "moonbitlang/x/sys",
+}
 
 pkgtype(kind: "executable")

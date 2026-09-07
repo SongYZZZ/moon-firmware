@@ -98,7 +98,7 @@ pub fn FirmwareImage::from_binary(
 ) -> FirmwareImage raise FirmwareError {
   let memory = MemoryMap::new()
   memory.insert(base_address, bytes)
-  { memory, entry: None, metadata: Metadata::new(RawBinary), warnings: [] }
+  { memory, entry: None, metadata: Metadata::new(RawBinary), warnings: [], }
 }
 
 ///|

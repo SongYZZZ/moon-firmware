@@ -294,5 +294,5 @@ pub fn convert(
         @model.diagnostic(UnknownFormat, "output format must be explicit"),
       )
   }
-  { bytes, warnings, binary_base }
+  { bytes, warnings, binary_base, }
 }

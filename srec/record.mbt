@@ -53,7 +53,7 @@ pub fn Record::new(
   if kind >= 1 && kind <= 3 {
     ignore(@model.data_range(address, data.length()))
   }
-  { kind, address, data }
+  { kind, address, data, }
 }
 
 ///|
@@ -62,7 +62,7 @@ pub fn parse_line(
   text : String,
   line? : Int = 1,
 ) -> Record raise @model.FirmwareError {
-  parse_at(text, { format: SRecord, line, column_offset: 0, record_type: None })
+  parse_at(text, { format: SRecord, line, column_offset: 0, record_type: None, })
 }
 
 ///|
@@ -77,7 +77,7 @@ fn parse_at(
     raise initial.error(InvalidRecord, 1, "expected S-record prefix")
   }
   let kind = text[1].to_int() - 48
-  let location = { ..initial, record_type: Some(kind) }
+  let location = { ..initial, record_type: Some(kind), }
   let width = address_width(kind) catch {
     e => raise @codec.locate_error(e, location)
   }

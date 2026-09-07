@@ -27,7 +27,7 @@ pub fn parse_document(
       )
     }
     let record = parse_at(source.text, source.location)
-    let loc = { ..source.location, record_type: Some(record.kind) }
+    let loc = { ..source.location, record_type: Some(record.kind), }
     if terminated {
       raise loc.error(AfterTerminator, 1, "record after S-record termination")
     }

@@ -12,13 +12,13 @@ pub fn MemorySegment::new(
   data : Bytes,
 ) -> MemorySegment raise FirmwareError {
   ignore(data_range(start, data.length()))
-  { start, data }
+  { start, data, }
 }
 
 ///|
 /// Interval occupied by this segment.
 pub fn MemorySegment::range(self : MemorySegment) -> AddressRange {
-  { start: self.start, end: self.start + self.data.length().to_int64() }
+  { start: self.start, end: self.start + self.data.length().to_int64(), }
 }
 
 ///|
@@ -38,7 +38,7 @@ pub struct MemoryMap {
 ///|
 /// An empty sparse map. Insertions are transactional on validation failure.
 pub fn MemoryMap::new() -> MemoryMap {
-  { storage: [], size: 0 }
+  { storage: [], size: 0, }
 }
 
 ///|
@@ -56,14 +56,14 @@ pub fn MemoryMap::segment_count(self : MemoryMap) -> Int {
 ///|
 /// Return immutable snapshots, never the map's mutable internal buffers.
 pub fn MemoryMap::segments(self : MemoryMap) -> Array[MemorySegment] {
-  self.storage.map(s => { start: s.start, data: Bytes::from_array(s.data) })
+  self.storage.map(s => { start: s.start, data: Bytes::from_array(s.data), })
 }
 
 ///|
 /// Independent mutable copy for transactional multi-image operations.
 pub fn MemoryMap::copy(self : MemoryMap) -> MemoryMap {
   {
-    storage: self.storage.map(s => { start: s.start, data: s.data.copy() }),
+    storage: self.storage.map(s => { start: s.start, data: s.data.copy(), }),
     size: self.size,
   }
 }
@@ -93,7 +93,7 @@ pub fn MemoryMap::highest_address(self : MemoryMap) -> Int64? {
 /// Span including internal gaps; empty maps have no bounds.
 pub fn MemoryMap::bounds(self : MemoryMap) -> AddressRange? {
   match (self.lowest_address(), self.highest_address()) {
-    (Some(start), Some(last)) => Some({ start, end: last + 1L })
+    (Some(start), Some(last)) => Some({ start, end: last + 1L, })
     _ => None
   }
 }
@@ -164,7 +164,7 @@ pub fn MemoryMap::insert(
     if address > end {
       self.check_size(bytes.length())
       self.check_segments(n + 1)
-      self.storage.push({ start: address, data: bytes.to_array() })
+      self.storage.push({ start: address, data: bytes.to_array(), })
       self.size += bytes.length()
       return
     }
@@ -246,7 +246,7 @@ pub fn MemoryMap::insert(
   for i in 0..<first {
     result.push(self.storage[i])
   }
-  result.push({ start, data })
+  result.push({ start, data, })
   for i in stop..<n {
     result.push(self.storage[i])
   }
@@ -324,13 +324,13 @@ pub fn MemoryMap::holes_in(
     let end = (s.start + s.data.length().to_int64()).min(range.end)
     if start < end {
       if cursor < start {
-        result.push({ start: cursor, end: start })
+        result.push({ start: cursor, end: start, })
       }
       cursor = end
     }
   }
   if cursor < range.end {
-    result.push({ start: cursor, end: range.end })
+    result.push({ start: cursor, end: range.end, })
   }
   result
 }

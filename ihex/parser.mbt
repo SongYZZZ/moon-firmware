@@ -24,7 +24,7 @@ pub fn parse_document(
       )
     }
     let record = parse_at(source.text, source.location)
-    let loc = { ..source.location, record_type: Some(record.kind) }
+    let loc = { ..source.location, record_type: Some(record.kind), }
     if eof {
       if options.mode == Permissive && record.kind == 1 {
         let @model.FirmwareError(d) = loc.error(
