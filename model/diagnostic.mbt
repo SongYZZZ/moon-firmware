@@ -45,7 +45,7 @@ pub(all) struct Diagnostic {
 
 ///|
 /// Library failures always carry a structured diagnostic.
-pub suberror FirmwareError {
+pub(all) suberror FirmwareError {
   FirmwareError(Diagnostic)
 } derive(Debug)
 
