@@ -4,7 +4,7 @@ MoonFirmware 是用 MoonBit 独立实现的嵌入式固件镜像工具库与原�
 
 作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.0
 
-[English README](README_EN.md) · [设计](docs/DESIGN.md) · [格式支持](docs/FORMAT_SUPPORT.md) · [测试](docs/TESTING.md) · [0.1.0 审计](docs/RELEASE_AUDIT.md)
+[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [设计](docs/DESIGN.md) · [格式支持](docs/FORMAT_SUPPORT.md) · [测试](docs/TESTING.md) · [0.1.0 审计](docs/RELEASE_AUDIT.md)
 
 ## 它解决什么问题
 
