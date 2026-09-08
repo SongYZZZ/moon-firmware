@@ -1,4 +1,7 @@
 import {
   "SongYZZZ/moon-firmware/model",
   "SongYZZZ/moon-firmware/firmware",
+  "SongYZZZ/moon-firmware/ihex",
+  "SongYZZZ/moon-firmware/srec",
+  "SongYZZZ/moon-firmware/validation",
 }

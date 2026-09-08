@@ -36,3 +36,55 @@ pub using @firmware {
   remove_range,
   fill_range,
 }
+
+///|
+/// Parse Intel HEX while exposing a format-specific name at the module root.
+pub fn parse_intel_hex(
+  text : String,
+  options? : ParseOptions = ParseOptions::default(),
+) -> FirmwareImage raise FirmwareError {
+  @ihex.parse_document(text, options~)
+}
+
+///|
+/// Serialize an image as deterministic Intel HEX text.
+pub fn write_intel_hex(
+  image : FirmwareImage,
+  options? : @ihex.WriterOptions = @ihex.WriterOptions::default(),
+) -> String raise FirmwareError {
+  @ihex.encode(image, options~)
+}
+
+///|
+/// Parse a Motorola S-Record block at the module root.
+pub fn parse_srecord(
+  text : String,
+  options? : ParseOptions = ParseOptions::default(),
+) -> FirmwareImage raise FirmwareError {
+  @srec.parse_document(text, options~)
+}
+
+///|
+/// Serialize an image as deterministic Motorola S-Record text.
+pub fn write_srecord(
+  image : FirmwareImage,
+  options? : @srec.WriterOptions = @srec.WriterOptions::default(),
+) -> String raise FirmwareError {
+  @srec.encode(image, options~)
+}
+
+///|
+/// Optional target-layout and bounded flash-page planning APIs.
+pub using @validation {
+  type MemoryRegion,
+  type CheckLevel,
+  type LayoutRule,
+  type LayoutIssue,
+  type LayoutOptions,
+  type LayoutReport,
+  type FlashOptions,
+  type FlashPage,
+  type FlashPlan,
+  validate_layout,
+  plan_flash_pages,
+}
