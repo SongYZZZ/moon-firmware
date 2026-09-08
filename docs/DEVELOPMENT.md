@@ -10,9 +10,8 @@ toolchain was installed under the ignored `.tools/moon` directory after the curr
 `moonbitlang/async` package and hosted formatter required moon 0.1.20260827 / moonc
 0.10.11. The bundled core was built for native. No global user installation changed.
 
-GitHub authentication was corrected and verified with `gh api user` as SongYZZZ.
-The exact public remote is https://github.com/SongYZZZ/moon-firmware. Mooncakes still
-reports hjn0123, so packaging is tested but publishing under the wrong owner is blocked.
+The exact public remote is https://github.com/SongYZZZ/moon-firmware. Repository
+ownership, remote URL and Apache-2.0 license metadata were verified before release.
 
 CI setup action v1.22 was verified in its upstream README and action metadata on
 2026-09-07: https://github.com/hustcer/setup-moonbit. The first hosted run exposed a

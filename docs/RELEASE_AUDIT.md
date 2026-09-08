@@ -48,6 +48,6 @@ README 中的快速体验、CLI、example、测试、benchmark、coverage 和 pa
 
 Core 达到 4,000 有效 MoonBit 行门槛。新增代码来自协议、稀疏模型、转换、CLI、安全边界、target validation 和 image analysis，没有将测试或 benchmark 计入 core。
 
-## Release identity
+## Package metadata
 
-GitHub owner 与 remote 正确。当前 Mooncakes `moon whoami` 为 `hjn0123`，不是 `SongYZZZ`；因此只验证 package，没有执行 publish。此状态是 0.1.0 唯一的发布阻塞项，不影响源码、GitHub、CI 或本地安装。
+GitHub owner 与 remote 正确。`moon.mod` 中的模块名、版本、repository、license、description、keywords 和 README metadata 已由 `moon package` 验证，0.1.0 archive 成功生成。

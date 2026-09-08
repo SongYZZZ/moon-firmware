@@ -173,9 +173,9 @@ tests/       原创最小 fixture
 docs/        设计、格式、测试、参考与实测记录
 ```
 
-## Mooncakes 与发布状态
+## Mooncakes 包元数据
 
-`moon.mod` 中的模块名已由当前 `moon package` 接受为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。0.1.0 包已能生成。当前机器的 Mooncakes 身份是 `hjn0123`，因此没有以错误身份执行 `moon publish`；仓库所有者登录正确 Mooncakes 账号后即可发布。
+`moon.mod` 中的模块名为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。`moon package` 已验证配置并成功生成 0.1.0 包。
 
 ## 兼容性与限制
 

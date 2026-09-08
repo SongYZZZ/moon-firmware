@@ -173,9 +173,9 @@ tests/       original minimal fixtures
 docs/        design, format, tests, references, measurements
 ```
 
-## Mooncakes status
+## Mooncakes package metadata
 
-The current `moon package` accepts the module name `SongYZZZ/moon-firmware` and produces the 0.1.0 archive with repository, license, description, keywords, and README metadata. The machine is logged into Mooncakes as `hjn0123`, so `moon publish` was deliberately not run under the wrong owner. Publication awaits the repository owner's correct Mooncakes login.
+The module name is `SongYZZZ/moon-firmware`. Repository, license, description, keywords, and README metadata are present, and `moon package` successfully validates and produces the 0.1.0 archive.
 
 ## Known limitations
 
