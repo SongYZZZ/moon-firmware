@@ -55,6 +55,7 @@ Install a release executable with the expected name into a chosen directory:
 ```powershell
 moon install ./cmd/moon-firmware --bin ./artifacts/install
 ./artifacts/install/moon-firmware.exe --version
+./artifacts/install/moon-firmware.exe inspect tests/fixtures/basic.hex
 ```
 
 ## CLI workflows
@@ -66,6 +67,8 @@ moon run cmd/moon-firmware -- verify tests/fixtures/basic.hex
 moon run cmd/moon-firmware -- convert tests/fixtures/basic.hex artifacts/basic.srec --force
 moon run cmd/moon-firmware -- convert artifacts/basic.srec artifacts/basic-round.hex --force
 moon run cmd/moon-firmware -- convert tests/fixtures/basic.hex artifacts/basic.bin --force
+moon run cmd/moon-firmware -- convert artifacts/basic.bin artifacts/basic-from-bin.hex --base-address 0x10 --force
+moon run cmd/moon-firmware -- convert artifacts/basic.bin artifacts/basic-from-bin.srec --base-address 0x10 --force
 moon run cmd/moon-firmware -- merge tests/fixtures/basic.hex tests/fixtures/extended_linear.hex -o artifacts/merged.hex --force
 moon run cmd/moon-firmware -- extract tests/fixtures/extended_linear.hex --start 0x08000001 --end 0x08000002 -o artifacts/extracted.hex --force
 moon run cmd/moon-firmware -- diff tests/fixtures/basic.hex tests/fixtures/changed.hex
