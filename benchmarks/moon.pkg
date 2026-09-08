@@ -1,0 +1,6 @@
+import {
+  "SongYZZZ/moon-firmware/model",
+  "SongYZZZ/moon-firmware/ihex",
+  "SongYZZZ/moon-firmware/srec",
+  "moonbitlang/core/bench",
+} for "test"

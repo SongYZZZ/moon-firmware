@@ -1,0 +1,5 @@
+import {
+  "SongYZZZ/moon-firmware" @firmware,
+}
+
+pkgtype(kind: "executable")

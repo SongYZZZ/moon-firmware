@@ -1,0 +1,8 @@
+*.mbt text eol=lf
+moon.mod text eol=lf
+moon.pkg text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.hex text eol=lf
+*.srec text eol=lf
