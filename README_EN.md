@@ -4,7 +4,7 @@ MoonFirmware is an embedded firmware image library and native CLI independently 
 
 Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.0
 
-[中文 README](README.md) · [Design](docs/DESIGN.md) · [Format support](docs/FORMAT_SUPPORT.md) · [Testing](docs/TESTING.md)
+[中文 README](README.md) · [Design](docs/DESIGN.md) · [Format support](docs/FORMAT_SUPPORT.md) · [Testing](docs/TESTING.md) · [0.1.0 audit](docs/RELEASE_AUDIT.md)
 
 ## Why MoonFirmware
 
