@@ -88,3 +88,22 @@ pub using @validation {
   validate_layout,
   plan_flash_pages,
 }
+
+///|
+/// Address-aware checksums, searches, integer access and Cortex-M inspection.
+pub using @analysis {
+  type ImageChecksumAlgorithm,
+  type ImageChecksum,
+  type MaskedPattern,
+  type AsciiSpan,
+  type ByteOrder,
+  type CortexMVectorTable,
+  checksum_image,
+  find_pattern,
+  find_ascii_strings,
+  read_uint,
+  encode_uint,
+  write_uint,
+  find_uint,
+  inspect_cortex_m_vectors,
+}
