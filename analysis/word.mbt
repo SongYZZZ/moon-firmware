@@ -143,6 +143,48 @@ pub struct CortexMVectorTable {
 } derive(Eq, Debug)
 
 ///|
+/// Address from which the first two Cortex-M vectors were decoded.
+pub fn CortexMVectorTable::base(self : CortexMVectorTable) -> Int64 {
+  self.base_address
+}
+
+///|
+/// Initial main stack pointer stored in vector slot zero.
+pub fn CortexMVectorTable::stack_pointer(self : CortexMVectorTable) -> Int64 {
+  self.initial_stack_pointer
+}
+
+///|
+/// Raw reset vector, including the architectural Thumb-state bit.
+pub fn CortexMVectorTable::raw_reset_vector(self : CortexMVectorTable) -> Int64 {
+  self.reset_vector
+}
+
+///|
+/// Reset handler address with the Thumb-state bit cleared.
+pub fn CortexMVectorTable::reset_handler(self : CortexMVectorTable) -> Int64 {
+  self.reset_address
+}
+
+///|
+/// Whether the raw reset vector selects Thumb state.
+pub fn CortexMVectorTable::has_thumb_bit(self : CortexMVectorTable) -> Bool {
+  self.thumb
+}
+
+///|
+/// Whether the initial stack pointer meets the requested alignment.
+pub fn CortexMVectorTable::is_stack_aligned(self : CortexMVectorTable) -> Bool {
+  self.stack_aligned
+}
+
+///|
+/// Whether the normalized reset handler has a byte in the sparse image.
+pub fn CortexMVectorTable::is_reset_mapped(self : CortexMVectorTable) -> Bool {
+  self.reset_mapped
+}
+
+///|
 /// Decode the first two little-endian Cortex-M vectors without assuming that
 /// the image starts at address zero. This inspects structure only; device-
 /// specific RAM and executable-region checks belong in target layout policy.

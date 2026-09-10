@@ -3,6 +3,7 @@ import {
   "SongYZZZ/moon-firmware/codec",
   "SongYZZZ/moon-firmware/firmware",
   "SongYZZZ/moon-firmware/srec",
+  "SongYZZZ/moon-firmware/validation",
   "moonbitlang/async/fs",
   "moonbitlang/async/io",
   "moonbitlang/async/stdio",

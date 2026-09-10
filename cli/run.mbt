@@ -58,6 +58,19 @@ pub async fn run(request : Request) -> Int {
             1
           }
         }
+        "gate" => {
+          let report = @validation.validate_cortex_m_release(
+            image,
+            config.release_options.unwrap(),
+          )
+          @stdio.stdout.write(report.render())
+          show_warnings(image.warnings)
+          if report.is_valid() {
+            0
+          } else {
+            1
+          }
+        }
         _ => {
           let processed = match config.command {
             "merge" =>

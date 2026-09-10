@@ -144,3 +144,47 @@ test "text convert range cannot be silently ignored" {
     InvalidOption,
   )
 }
+
+///|
+test "gate parses explicit Cortex-M target ranges" {
+  assert_true(
+    parse_arguments([
+      "gate", "release.hex", "--flash-start", "0x08000000", "--flash-end", "0x080FFFFF",
+      "--ram-start", "0x20000000", "--ram-end", "0x2001FFFF", "--page-size", "0x400",
+      "--vector-address", "0x08008000",
+    ])
+    is Run(
+      {
+        release_options: Some(
+          {
+            flash: { start: 0x08000000L, end: 0x08100000L, },
+            ram: [{ start: 0x20000000L, end: 0x20020000L, }],
+            vector_address: 0x08008000L,
+            page_size: 1024,
+            ..
+          }
+        ),
+        ..
+      }
+    ),
+  )
+}
+
+///|
+test "gate requires every target boundary and a page size" {
+  assert_eq(
+    rejected([
+      "gate", "release.hex", "--flash-start", "0x08000000", "--flash-end", "0x080FFFFF",
+      "--ram-start", "0x20000000", "--ram-end", "0x2001FFFF",
+    ]).code,
+    InvalidOption,
+  )
+}
+
+///|
+test "gate-only options cannot be silently ignored by inspect" {
+  assert_eq(
+    rejected(["inspect", "a.hex", "--page-size", "1024"]).code,
+    InvalidOption,
+  )
+}

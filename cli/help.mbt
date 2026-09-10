@@ -28,9 +28,13 @@ pub fn help(command : String) -> String {
       out.write_string(
         "Usage: moon-firmware diff LEFT RIGHT [--json]\nCompare occupied addresses. Exit 1 if bytes or entry differ; 0 if equal.\n",
       )
+    "gate" =>
+      out.write_string(
+        "Usage: moon-firmware gate INPUT --flash-start ADDRESS --flash-end ADDRESS --ram-start ADDRESS --ram-end ADDRESS --page-size BYTES [OPTIONS]\nValidate a Cortex-M release image and list touched Flash pages. Range ends are inclusive.\n  --vector-address ADDRESS    Default: Flash start\n  --erase-value BYTE          Default: 0xFF\n",
+      )
     _ =>
       out.write_string(
-        "Usage: moon-firmware COMMAND [OPTIONS]\nCommands: inspect, verify, convert, merge, extract, diff\nUse COMMAND --help for details.\n",
+        "Usage: moon-firmware COMMAND [OPTIONS]\nCommands: inspect, verify, convert, merge, extract, diff, gate\nUse COMMAND --help for details.\n",
       )
   }
   out.write_string(

@@ -85,8 +85,13 @@ pub using @validation {
   type FlashOptions,
   type FlashPage,
   type FlashPlan,
+  type ReleaseRule,
+  type ReleaseIssue,
+  type CortexMReleaseOptions,
+  type CortexMReleaseReport,
   validate_layout,
   plan_flash_pages,
+  validate_cortex_m_release,
 }
 
 ///|

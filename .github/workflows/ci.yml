@@ -16,3 +16,4 @@ jobs:
       - run: moon build
       - run: moon run cmd/moon-firmware -- inspect tests/fixtures/basic.hex
       - run: moon run cmd/moon-firmware -- verify tests/fixtures/basic.hex
+      - run: moon run cmd/moon-firmware -- gate tests/fixtures/cortex_m_release.hex --flash-start 0x08000000 --flash-end 0x0800FFFF --ram-start 0x20000000 --ram-end 0x2000FFFF --page-size 0x400

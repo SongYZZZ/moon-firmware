@@ -314,3 +314,74 @@ test "renderers expose actionable summaries without dumping page bytes" {
   assert_true(manifest.contains("Flash pages: 1"))
   assert_true(manifest.contains("0x00001000..0x0000100F: 1 payload bytes"))
 }
+
+///|
+fn cortex_target() -> CortexMReleaseOptions raise {
+  CortexMReleaseOptions::new(
+    @model.AddressRange::new(0x08000000L, 0x08010000L),
+    @model.AddressRange::new(0x20000000L, 0x20010000L),
+    page_size=1024,
+  )
+}
+
+///|
+test "Cortex-M release gate accepts a mapped vector table and reset handler" {
+  let image = test_image([
+    (0x08000000L, b"\x00\x00\x01\x20\x09\x00\x00\x08\x70"),
+  ])
+  let report = validate_cortex_m_release(image, cortex_target())
+  assert_true(report.is_valid())
+  assert_eq(report.release_issues().length(), 0)
+  assert_eq(report.flash_plan().unwrap().pages.length(), 1)
+  assert_eq(report.vector_table().unwrap().stack_pointer(), 0x20010000L)
+  assert_true(report.render().contains("Release gate: passed"))
+}
+
+///|
+test "Cortex-M release gate reports missing vector bytes without crashing" {
+  let image = test_image([(0x08000000L, b"short")])
+  let report = validate_cortex_m_release(image, cortex_target())
+  assert_false(report.is_valid())
+  assert_eq(report.release_issues()[0].rule, VectorTableMissing)
+  assert_eq(report.vector_table(), None)
+  assert_eq(report.flash_plan(), None)
+}
+
+///|
+test "Cortex-M release gate checks stack RAM Thumb state and reset mapping" {
+  let image = test_image([(0x08000000L, b"\x04\x00\x00\x10\x00\x01\x00\x10")])
+  let report = validate_cortex_m_release(image, cortex_target())
+  let issues = report.release_issues()
+  assert_true(issues.any(issue => issue.rule == StackPointerOutsideRam))
+  assert_true(issues.any(issue => issue.rule == StackPointerMisaligned))
+  assert_true(issues.any(issue => issue.rule == ResetThumbBitMissing))
+  assert_true(issues.any(issue => issue.rule == ResetHandlerOutsideFlash))
+  assert_true(issues.any(issue => issue.rule == ResetHandlerUnmapped))
+  assert_false(report.is_valid())
+}
+
+///|
+test "Cortex-M release gate rejects payload outside target Flash" {
+  let image = test_image([
+    (0x08000000L, b"\x00\x00\x01\x20\x09\x00\x00\x08\x70"),
+    (0x20000000L, b"ram-payload"),
+  ])
+  let report = validate_cortex_m_release(image, cortex_target())
+  assert_false(report.layout.is_valid())
+  assert_false(report.is_valid())
+  assert_true(report.render().contains("outside all allowed target regions"))
+}
+
+///|
+test "Cortex-M release target validates page alignment and vector bounds" {
+  let image = @model.FirmwareImage::new()
+  let mut caught = false
+  ignore(validate_cortex_m_release(image, { ..cortex_target(), page_size: 3, })) catch {
+    @model.FirmwareError(d) => {
+      caught = true
+      assert_eq(d.code, InvalidOption)
+    }
+    _ => fail("expected FirmwareError")
+  }
+  assert_true(caught)
+}

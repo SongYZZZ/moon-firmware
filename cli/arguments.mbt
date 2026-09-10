@@ -10,6 +10,7 @@ pub struct Config {
   convert_options : @firmware.ConvertOptions
   range : @model.AddressRange?
   entry_policy : @firmware.EntryPolicy
+  release_options : @validation.CortexMReleaseOptions?
   force : Bool
   json : Bool
 }
@@ -77,7 +78,7 @@ pub fn parse_arguments(
     return Help("")
   }
   let command = args[0]
-  if !["inspect", "verify", "convert", "merge", "extract", "diff"].contains(
+  if !["inspect", "verify", "convert", "merge", "extract", "diff", "gate"].contains(
       command,
     ) {
     raise usage_error("unknown command: " + command)
@@ -85,7 +86,8 @@ pub fn parse_arguments(
   let valued = [
     "--input-format", "--output-format", "--base-address", "--fill", "--start", "--end",
     "--record-length", "--address-width", "--max-output", "--overlap", "--entry-policy",
-    "-o", "--output",
+    "--flash-start", "--flash-end", "--ram-start", "--ram-end", "--vector-address",
+    "--page-size", "--erase-value", "-o", "--output",
   ]
   let boolean = [
     "--permissive", "--force", "--json", "--lowercase", "--crlf", "--flatten-entry",
@@ -168,6 +170,13 @@ pub fn parse_arguments(
     }
     if key == "--entry-policy" && command != "merge" {
       raise usage_error("--entry-policy is only valid for merge")
+    }
+    if [
+        "--flash-start", "--flash-end", "--ram-start", "--ram-end", "--vector-address",
+        "--page-size", "--erase-value",
+      ].contains(key) &&
+      command != "gate" {
+      raise usage_error(key + " is only valid for gate")
     }
   }
   for key, _ in flags {
@@ -321,6 +330,47 @@ pub fn parse_arguments(
     Some(value) => parse_entry_policy(value)
     None => @firmware.EntryPolicy::RejectEntryConflict
   }
+  let release_options = if command == "gate" {
+    let required_gate = [
+      "--flash-start", "--flash-end", "--ram-start", "--ram-end", "--page-size",
+    ]
+    for key in required_gate {
+      if !options.contains(key) {
+        raise usage_error("gate requires " + key)
+      }
+    }
+    let flash = @model.AddressRange::inclusive(
+      @codec.parse_number(options["--flash-start"]),
+      @codec.parse_number(options["--flash-end"]),
+    )
+    let ram = @model.AddressRange::inclusive(
+      @codec.parse_number(options["--ram-start"]),
+      @codec.parse_number(options["--ram-end"]),
+    )
+    let vector_address = match options.get("--vector-address") {
+      Some(value) => @codec.parse_number(value)
+      None => flash.start
+    }
+    let page_size = @codec.parse_number(
+      options["--page-size"],
+      max_value=1048576L,
+    ).to_int()
+    let erase_value = match options.get("--erase-value") {
+      Some(value) => @codec.parse_number(value, max_value=255L).to_byte()
+      None => b'\xFF'
+    }
+    Some(
+      @validation.CortexMReleaseOptions::new(
+        flash,
+        ram,
+        vector_address~,
+        page_size~,
+        erase_value~,
+      ),
+    )
+  } else {
+    None
+  }
   Run({
     command,
     inputs: positional,
@@ -339,6 +389,7 @@ pub fn parse_arguments(
     convert_options: conversion,
     range,
     entry_policy,
+    release_options,
     force: flags.contains("--force"),
     json: flags.contains("--json"),
   })
