@@ -13,10 +13,11 @@
 - Motorola S-Record S0／S1／S2／S3／S5／S6／S7／S8／S9 codec。
 - 内容格式检测以及 HEX、SREC、BIN 全向转换。
 - overlap-aware merge、range extract／remove／fill／relocate 和 address diff。
-- inspect、verify、convert、merge、extract、diff 原生 CLI。
+- inspect、verify、convert、merge、extract、diff、Cortex-M release gate 原生 CLI。
 - target region／entry 校验和 bounded touched-page flash plan。
+- Cortex-M Flash／RAM 合同、向量表语义与烧录页计划的一体化发布门禁。
 - image CRC／additive checksum、masked pattern、ASCII、word 与 Cortex-M vector 分析。
-- 231 个测试入口，包括固定 seed property tests、原创 fixture 和真实文件 IO。
+- 239 个测试入口，包括固定 seed property tests、原创 fixture 和真实文件 IO。
 - native benchmark、GitHub Actions、双语 README、设计／格式／测试／安全文档。
 
 ### Known limitations

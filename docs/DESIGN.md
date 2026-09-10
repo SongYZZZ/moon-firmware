@@ -57,6 +57,12 @@ diff 对两个排序 segment 做区间 sweep，生成 only-left、only-right 和
 
 flash planner 只产生含 payload 的完整 page。页内空白由调用者明确指定的 erase value 填充，完全未触及的页不出现。它在分配页数据前验证完整页的 allowed range、页数和总输出预算；计划是数据，不代表已经执行设备擦除。
 
+## Cortex-M 发布门禁
+
+`validate_cortex_m_release` 将通用布局校验、Cortex-M 前两个向量和 flash page plan 组合成一个目标合同。调用者必须明确给出 Flash、一个或多个 RAM 区间、向量表地址、页大小与擦除值；库不根据文件名或地址猜测芯片型号。
+
+所有 payload 必须落在 Flash。初始栈指针必须满足对齐并位于 RAM；由于 Cortex-M 启动栈通常从 RAM 顶端向下增长，栈指针允许等于 half-open RAM 区间的 `end`。复位向量必须设置 Thumb 位，清除状态位后的处理器地址必须位于 Flash 且在稀疏镜像中存在。只有布局和向量检查都通过时才生成完整页计划。门禁返回报告和退出状态，不连接设备，也不把计划解释为已经烧录。
+
 ## 错误模型
 
 `FirmwareError` 包含 `Diagnostic`，后者有稳定 `ErrorCode`、格式、1-based 行列、可选记录类型和地址范围。parser 将底层地址／overlap 错误重新附上原始行位置。IO 错误只在 CLI 边界转换为 `Io`；Library API 不接收路径。

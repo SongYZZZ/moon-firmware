@@ -29,7 +29,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-当前完整测试结果为 231／231 通过。`moon coverage analyze -- -f summary` 报告 1,417／1,864 个可插桩点命中，即 76.02%。CLI 和 example main 不由普通 test runner 调用，因此还执行独立 smoke tests。
+当前完整测试结果为 239／239 通过。`moon coverage analyze -- -f summary` 报告 1,531／2,014 个可插桩点命中，即 76.02%。CLI 和 example main 不由普通 test runner 调用，因此还执行独立 smoke tests。
 
 ## 测试构成
 
@@ -60,12 +60,16 @@ moon package --list
 | `srec32.srec` | S3／S5／S7 |
 | `sparse.hex` | 两段不连续地址 |
 | `changed.hex` | CLI diff |
+| `cortex_m_release.hex` | Cortex-M vector and release-gate smoke test |
+| `cortex_m_boot.hex` | Sparse bootloader assembly scenario |
+| `cortex_m_app.hex` | Application vector table at `0x08008000` |
+| `cortex_m_app_v2.hex` | One-byte OTA diff scenario |
 
 这些文件均为原创最小 fixture，来源与许可记录在 `REFERENCES.md`。
 
 ## CLI smoke tests
 
-实际执行了 help、version、inspect、verify、HEX→SREC、SREC→HEX、HEX→BIN、merge、extract、diff，以及两个 Library API example。diff 的预期变化退出码为 1；其他 smoke test 为 0。还使用 `moon install ./cmd/moon-firmware --bin ./artifacts/install` 构建并运行了名为 `moon-firmware.exe` 的 release 可执行文件。
+实际执行了 help、version、inspect、verify、HEX→SREC、SREC→HEX、HEX→BIN、merge、extract、diff、Cortex-M `gate`，以及两个 Library API example。diff 的预期变化退出码为 1；有效固件的 gate 为 0；策略拒绝返回 1；输入或 I/O 错误返回 2。还使用 `moon install ./cmd/moon-firmware --bin ./artifacts/install` 构建并运行了名为 `moon-firmware.exe` 的 release 可执行文件。
 
 ## CI
 

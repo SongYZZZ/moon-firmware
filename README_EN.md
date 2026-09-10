@@ -1,10 +1,10 @@
 # MoonFirmware
 
-MoonFirmware is an embedded firmware image library and native CLI independently implemented in MoonBit. It parses, validates, and writes Intel HEX and Motorola S-Record, then performs conversion, merge, extraction, and address-aware diff in one sparse address model.
+MoonFirmware is an MCU firmware release-validation library and native CLI independently implemented in MoonBit. It reads Intel HEX, Motorola S-Record, and BIN artifacts, then performs format validation, image assembly, address-aware diff, Cortex-M release gates, and flash-page planning in one sparse address model.
 
 Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.0
 
-[中文 README](README.md) · [Design](docs/DESIGN.md) · [Format support](docs/FORMAT_SUPPORT.md) · [Testing](docs/TESTING.md) · [0.1.0 audit](docs/RELEASE_AUDIT.md)
+[中文 README](README.md) · [Runnable scenarios](docs/APPLICATION_SCENARIOS.md) · [Prior-art boundary](docs/PRIOR_ART_AND_BOUNDARY.md) · [Design](docs/DESIGN.md) · [0.1.0 audit](docs/RELEASE_AUDIT.md)
 
 ## Why MoonFirmware
 
@@ -21,6 +21,7 @@ MoonFirmware is not a hex editor. A hex editor focuses on raw bytes at file offs
 - All HEX/SREC/BIN directions. BIN input requires a base address; BIN gaps require an explicit fill byte.
 - Multi-image merge, range extraction, address-space diff, inspect, and verify.
 - Target memory-layout validation, entry-point checks, and bounded touched-page flash plans.
+- A Cortex-M release gate combining Flash/RAM contracts, vector-table semantics, initial-stack checks, Thumb reset handling, and the page plan.
 - CRC-32, CRC-16, additive checksums, masked search, ASCII discovery, endian word access, and Cortex-M vector inspection.
 - Strict and permissive parsing. Permissive mode never accepts checksum corruption.
 - Native CLI with regular-file checks, resource limits, no overwrite by default, exclusive same-directory staging, sync, and rename.
@@ -72,6 +73,7 @@ moon run cmd/moon-firmware -- convert artifacts/basic.bin artifacts/basic-from-b
 moon run cmd/moon-firmware -- merge tests/fixtures/basic.hex tests/fixtures/extended_linear.hex -o artifacts/merged.hex --force
 moon run cmd/moon-firmware -- extract tests/fixtures/extended_linear.hex --start 0x08000001 --end 0x08000002 -o artifacts/extracted.hex --force
 moon run cmd/moon-firmware -- diff tests/fixtures/basic.hex tests/fixtures/changed.hex
+moon run cmd/moon-firmware -- gate tests/fixtures/cortex_m_release.hex --flash-start 0x08000000 --flash-end 0x0800FFFF --ram-start 0x20000000 --ram-end 0x2000FFFF --page-size 0x400
 ```
 
 Use `--fill 0xFF` for a gapped BIN, optionally with an explicit `--start`/`--end` window. The default BIN limit is 16 MiB and the hard limit is 64 MiB. Replacing a path requires `--force`. Diff returns 0 for semantic equality, 1 for a difference, and 2 for usage, validation, parsing, or I/O errors.
@@ -153,7 +155,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-The current local result is 231 test entries passed, including hundreds of fixed-seed generated cases. Coverage is 1,417 of 1,864 instrumented points, or 76.02%. See [BENCHMARKS.md](docs/BENCHMARKS.md) for measured performance. CI runs format, check, test, and build on Ubuntu native.
+The current local result is 239 test entries passed, including hundreds of fixed-seed generated cases. Coverage is 1,531 of 2,014 instrumented points, or 76.02%. See [BENCHMARKS.md](docs/BENCHMARKS.md) for measured performance. CI runs format, check, test, build, and a release-gate smoke test on Ubuntu native.
 
 ## Layout
 

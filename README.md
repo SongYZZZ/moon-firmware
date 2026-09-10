@@ -1,16 +1,43 @@
 # MoonFirmware
 
-MoonFirmware 是用 MoonBit 独立实现的嵌入式固件镜像工具库与原生 CLI。它解析、校验并生成 Intel HEX 和 Motorola S-Record，在统一的稀疏地址空间中完成 HEX、SREC、BIN 转换、合并、截取和地址级 diff。
+MoonFirmware 是用 MoonBit 独立实现的 MCU 固件发布验证工具库与原生 CLI。它读取 Intel HEX、Motorola S-Record 和 BIN，在统一的稀疏地址空间中完成格式校验、镜像装配、地址级 diff、Cortex-M 发布门禁与烧录页计划。
 
 作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.0
 
-[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [设计](docs/DESIGN.md) · [格式支持](docs/FORMAT_SUPPORT.md) · [测试](docs/TESTING.md) · [0.1.0 审计](docs/RELEASE_AUDIT.md)
+[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [应用场景](docs/APPLICATION_SCENARIOS.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md) · [设计](docs/DESIGN.md) · [0.1.0 审计](docs/RELEASE_AUDIT.md)
 
 ## 它解决什么问题
 
 HEX 和 SREC 不是普通的十六进制文本：每条记录都带地址、类型、长度和 checksum，镜像还可能分布在相距很远的 flash 区域。MoonFirmware 将记录恢复为 `FirmwareImage`，因此能够发现地址冲突和空洞，并在格式转换时保留真正的地址与入口点语义。
 
 MoonFirmware 不是 Hex Editor。Hex Editor 主要查看和修改文件偏移处的原始字节；MoonFirmware 处理 MCU/Bootloader 工具链中的带地址固件镜像、record validation、checksum、稀疏内存重建、转换、合并、截取和比较。
+
+## 三分钟发布场景
+
+下面的原创 fixture 模拟一个 Cortex-M 应用。命令同时检查 Flash 占用、RAM 栈顶、向量表、Thumb 复位地址与实际烧录页：
+
+```powershell
+moon run cmd/moon-firmware -- gate tests/fixtures/cortex_m_release.hex --flash-start 0x08000000 --flash-end 0x0800FFFF --ram-start 0x20000000 --ram-end 0x2000FFFF --page-size 0x400
+```
+
+实际结果：
+
+```text
+Release gate: passed
+Flash: 0x08000000..0x0800FFFF
+Vector table: 0x08000000
+Initial stack pointer: 0x20010000
+Reset handler: 0x08000008
+Flash pages: 1
+Page size: 1024 bytes
+Payload: 9 bytes
+Output: 1024 bytes
+Erase padding: 1015 bytes
+Erase value: 0xFF
+0x08000000..0x080003FF: 9 payload bytes
+```
+
+bootloader＋application 装配和 OTA 地址差异的完整可运行流程见[应用场景](docs/APPLICATION_SCENARIOS.md)。
 
 ## 已实现功能
 
@@ -21,6 +48,7 @@ MoonFirmware 不是 Hex Editor。Hex Editor 主要查看和修改文件偏移处
 - HEX、SREC、BIN 全向转换；BIN 输入要求 base address，BIN 空洞要求显式 fill。
 - 多镜像 merge、范围 extract、地址级 diff、inspect、verify。
 - 目标内存布局校验、入口点检查和仅包含已触及页的 flash page plan。
+- Cortex-M release gate：联合检查 Flash／RAM 合同、向量表、初始栈、Thumb 复位地址与烧录页。
 - 镜像 CRC-32/CRC-16/additive checksum、掩码模式搜索、ASCII 字符串、字节序整数和 Cortex-M 向量表检查。
 - Strict 与 Permissive 解析；宽松模式仍拒绝 checksum 损坏。
 - 原生 CLI 安全限制：普通文件检查、输入与输出上限、默认拒绝覆盖、同目录排他临时文件、`sync` 后 rename。
@@ -72,6 +100,7 @@ moon run cmd/moon-firmware -- convert artifacts/basic.bin artifacts/basic-from-b
 moon run cmd/moon-firmware -- merge tests/fixtures/basic.hex tests/fixtures/extended_linear.hex -o artifacts/merged.hex --force
 moon run cmd/moon-firmware -- extract tests/fixtures/extended_linear.hex --start 0x08000001 --end 0x08000002 -o artifacts/extracted.hex --force
 moon run cmd/moon-firmware -- diff tests/fixtures/basic.hex tests/fixtures/changed.hex
+moon run cmd/moon-firmware -- gate tests/fixtures/cortex_m_release.hex --flash-start 0x08000000 --flash-end 0x0800FFFF --ram-start 0x20000000 --ram-end 0x2000FFFF --page-size 0x400
 ```
 
 转换到有 gap 的 BIN 时提供 `--fill 0xFF`，也可用 `--start`、`--end` 明确输出窗口；默认最大 BIN 为 16 MiB，硬上限为 64 MiB。写入已有路径必须显式给出 `--force`。diff 相同返回 0，有变化返回 1，使用错误返回 2。
@@ -103,6 +132,7 @@ Only right:
 - `FirmwareImage`、`MemoryMap`、`MemorySegment`、`AddressRange`
 - `merge_images`、`extract_range`、`diff_images`、`inspect_image`
 - `validate_layout`、`plan_flash_pages`
+- `validate_cortex_m_release`
 - `checksum_image`、`find_pattern`、`find_ascii_strings`、`inspect_cortex_m_vectors`
 
 协议级 `Record`、checksum 与 writer options 位于 `SongYZZZ/moon-firmware/ihex` 和 `SongYZZZ/moon-firmware/srec`。可运行示例：
@@ -153,7 +183,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-当前本地结果：231 个测试入口全部通过；其中包含数百组固定 seed 生成用例。覆盖工具报告 1,417／1,864 个可插桩点命中（76.02%）。性能数字与环境见 [BENCHMARKS.md](docs/BENCHMARKS.md)。CI 在 Ubuntu native 环境运行 format、check、test 和 build。
+当前本地结果：239 个测试入口全部通过；其中包含数百组固定 seed 生成用例。覆盖工具报告 1,531／2,014 个可插桩点命中（76.02%）。性能数字与环境见 [BENCHMARKS.md](docs/BENCHMARKS.md)。CI 在 Ubuntu native 环境运行 format、check、test、build 和 release-gate smoke test。
 
 ## 项目结构
 

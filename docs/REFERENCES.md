@@ -29,3 +29,7 @@ MoonFirmware 依据公开格式说明独立实现，没有复制其他语言 Int
 - MoonBit core：编译器随附标准库，许可证见其官方发行内容。
 
 所有提交的 `tests/fixtures` 都是本项目根据上述格式描述编写的最小样例，没有再分发第三方固件。若未来引入外部 fixture，必须先确认许可证，并在这里记录项目、仓库、版本、文件、许可证和用途。
+
+## 既有项目核查
+
+- `Zzqy-yi/moonbit-firmware-image`：<https://github.com/Zzqy-yi/moonbit-firmware-image>，Apache-2.0。2026-09-10 因黑客松初审意见核查其公开 README、目录和接口，用于说明参赛项目的重叠与互补边界；未复制其实现代码。核查结果见 `PRIOR_ART_AND_BOUNDARY.md`。
