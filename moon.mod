@@ -8,13 +8,19 @@ repository = "https://github.com/SongYZZZ/moon-firmware"
 
 license = "Apache-2.0"
 
-keywords = [ "firmware", "intel-hex", "srecord", "embedded" ]
+keywords = [
+  "firmware",
+  "intel-hex",
+  "srecord",
+  "cortex-m",
+  "release-validation",
+]
 
 preferred_target = "native"
 
 supported_targets = "native"
 
-description = "Sparse firmware image toolkit: Intel HEX, Motorola S-Record and binary"
+description = "MCU firmware release validation: HEX, S-record, Cortex-M gates and flash plans"
 
 import {
   "moonbitlang/x@0.5.1",
