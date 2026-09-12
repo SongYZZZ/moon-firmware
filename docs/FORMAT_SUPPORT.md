@@ -70,9 +70,9 @@ Permissive 不是数据修复模式，不会猜 checksum、忽略截断 data 或
 
 ## 实测范围
 
-仓库内九个 fixture 均为本项目根据公开格式说明人工制作：基本 HEX、扩展线性地址、segment 地址、坏 checksum、16／24／32-bit SREC、稀疏 HEX 和变化镜像。它们经过本项目 parser、writer、round-trip、CLI 文件 IO 和 checksum 测试。
+仓库 fixture 均为本项目根据公开格式说明人工制作，包括基本与扩展 HEX、16／24／32-bit SREC、稀疏镜像、Cortex-M 发布镜像和 checksum 正确但目标语义错误的对照文件。它们经过本项目 parser、writer、round-trip、CLI 文件 IO 和 checksum 测试。
 
-截至 0.1.0 准备阶段，本机没有可用的 `srec_cat`、GNU `objcopy`、LLVM `objcopy` 或 ARM `objcopy`，因此没有记录第三方工具交叉兼容结果。本项目不据此声称完全兼容所有供应商方言。完成真实外部测试后才会在本文件增加工具版本、命令、fixture 和结果。
+2026-09-12 使用 IntelHex 2.3.0 和 bincopy 20.1.1 完成外部兼容实验。MoonFirmware 生成的 HEX 可由 IntelHex 读取，生成的 HEX／SREC 可由 bincopy 读取；IntelHex 重写后的文件与原镜像地址、数据和入口一致。bincopy 20.1.1 的 HEX→SREC 输出没有 termination，MoonFirmware Strict 按规范拒绝，Permissive 给出 warning 后接受且地址数据一致。工具版本、命令和目标语义对照结果见 `COMPATIBILITY_REPORT.md`。这些结果不构成对所有供应商方言的完全兼容声明。
 
 ## 已知限制
 

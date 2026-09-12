@@ -64,6 +64,7 @@ moon package --list
 | `cortex_m_boot.hex` | Sparse bootloader assembly scenario |
 | `cortex_m_app.hex` | Application vector table at `0x08008000` |
 | `cortex_m_app_v2.hex` | One-byte OTA diff scenario |
+| `cortex_m_bad_target.hex` | Valid HEX/checksum with invalid Cortex-M target semantics |
 
 这些文件均为原创最小 fixture，来源与许可记录在 `REFERENCES.md`。
 

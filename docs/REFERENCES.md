@@ -32,4 +32,6 @@ MoonFirmware 依据公开格式说明独立实现，没有复制其他语言 Int
 
 ## 既有项目核查
 
-- `Zzqy-yi/moonbit-firmware-image`：<https://github.com/Zzqy-yi/moonbit-firmware-image>，Apache-2.0。2026-09-10 因黑客松初审意见核查其公开 README、目录和接口，用于说明参赛项目的重叠与互补边界；未复制其实现代码。核查结果见 `PRIOR_ART_AND_BOUNDARY.md`。
+- `Zzqy-yi/moonbit-firmware-image`：<https://github.com/Zzqy-yi/moonbit-firmware-image>，Apache-2.0。核查其公开 README、目录和接口，用于说明参赛项目的重叠与互补边界；未复制其实现代码。核查结果见 `PRIOR_ART_AND_BOUNDARY.md`。
+- IntelHex 2.3.0：<https://pypi.org/project/intelhex/>，BSD。仅用于读取与重写本项目 Intel HEX 输出的兼容性实验，不是运行依赖。
+- bincopy 20.1.1：<https://github.com/eerimoq/bincopy>，MIT。仅用于读取本项目 HEX／SREC、执行交叉转换和观察连续 BIN 行为，不是运行依赖。
