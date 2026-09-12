@@ -4,7 +4,7 @@ MoonFirmware is an MCU firmware release-validation library and native CLI indepe
 
 Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.0
 
-[中文 README](README.md) · [Runnable scenarios](docs/APPLICATION_SCENARIOS.md) · [Prior-art boundary](docs/PRIOR_ART_AND_BOUNDARY.md) · [Design](docs/DESIGN.md) · [0.1.0 audit](docs/RELEASE_AUDIT.md)
+[中文 README](README.md) · [Runnable scenarios](docs/APPLICATION_SCENARIOS.md) · [Mature-tool comparison](docs/COMPATIBILITY_REPORT.md) · [Prior-art boundary](docs/PRIOR_ART_AND_BOUNDARY.md) · [Design](docs/DESIGN.md)
 
 ## Why MoonFirmware
 
@@ -184,9 +184,9 @@ The module name is `SongYZZZ/moon-firmware`. Repository, license, description, k
 - The CLI uses native file-system APIs from `moonbitlang/async` and `moonbitlang/x`; 0.1.0 is declared native-only. Parser and model code itself has no OS dependency.
 - The S-Record parser handles one block and rejects S4. When an image has no entry, the writer emits a format-required zero termination address and reports a warning.
 - BIN cannot retain entry points, S0 headers, or record provenance; conversion reports losses.
-- All committed fixtures are original examples made from public format descriptions. No external-tool compatibility matrix has been recorded yet, so this project does not claim universal compatibility.
+- All committed fixtures are original examples made from public format descriptions. See [COMPATIBILITY_REPORT.md](docs/COMPATIBILITY_REPORT.md) for tests with IntelHex 2.3.0 and bincopy 20.1.1; these finite samples do not establish compatibility with every vendor dialect.
 - Same-directory staging uses sync and rename, but does not promise directory-fsync power-loss durability or detect a same-size concurrent input rewrite.
 
-The roadmap includes an external-tool compatibility matrix, multi-block S-Record input, optional target-profile files, streaming very-large-file input, and portable CLI backends when MoonBit I/O permits. [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) is the source of truth for limitations.
+The roadmap includes expanding the compatibility matrix with SRecord/objcopy, multi-block S-Record input, optional target-profile files, streaming very-large-file input, and portable CLI backends when MoonBit I/O permits. [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) is the source of truth for limitations.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [REFERENCES.md](docs/REFERENCES.md), and [CHANGELOG.md](CHANGELOG.md). This implementation was written independently from public format descriptions; no source code from another language library was copied.

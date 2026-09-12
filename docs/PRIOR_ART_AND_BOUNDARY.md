@@ -1,6 +1,6 @@
 # 既有项目核查与互补边界
 
-本文回应 2026 MoonBit 九月黑客松初审关于核心功能重叠的意见。核查日期为 2026-09-10，比较对象是组委会所称 `Zzqy-yi/firmware-image-toolkit` 当前可访问的公开仓库：[`Zzqy-yi/moonbit-firmware-image`](https://github.com/Zzqy-yi/moonbit-firmware-image)。该仓库创建于 2026-08-10，默认分支为 `master`；本页只陈述当日公开 README、目录与接口能够支持的结论。
+本文记录 MoonFirmware 的既有项目调研、功能边界与取舍。核查日期为 2026-09-12，比较对象为 [`Zzqy-yi/moonbit-firmware-image`](https://github.com/Zzqy-yi/moonbit-firmware-image)。该仓库创建于 2026-08-10，默认分支为 `master`；本页只陈述核查日公开 README、目录与接口能够支持的结论。
 
 ## 共同基础
 
@@ -37,6 +37,6 @@ MoonFirmware 0.1.0 将格式 codec 视为必要的读取层，重点解决以下
 
 ## 独立实现与后续边界
 
-MoonFirmware 的提交始于 2026-09-07，晚于比较对象的公开创建日期。收到初审意见后才将其加入既有项目核查。本项目没有复制该仓库代码；协议算法依据 `REFERENCES.md` 中列出的公开格式资料实现。
+MoonFirmware 的提交始于 2026-09-07，晚于比较对象的公开创建日期。本项目没有复制该仓库代码；协议算法依据 `REFERENCES.md` 中列出的公开格式资料实现。
 
 后续版本会继续围绕发布验证扩展，例如可版本化的目标板描述、烧录页 manifest 输出和发布策略组合。不会为了竞争而复刻对方的 patch、batch 或 evidence-report API；若未来功能边界再次接近，将继续在本页记录来源、差异与取舍。

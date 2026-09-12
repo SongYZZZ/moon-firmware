@@ -4,7 +4,7 @@ MoonFirmware 是用 MoonBit 独立实现的 MCU 固件发布验证工具库与�
 
 作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.0
 
-[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [应用场景](docs/APPLICATION_SCENARIOS.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md) · [设计](docs/DESIGN.md) · [0.1.0 审计](docs/RELEASE_AUDIT.md)
+[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [应用场景](docs/APPLICATION_SCENARIOS.md) · [成熟工具对照](docs/COMPATIBILITY_REPORT.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md) · [设计](docs/DESIGN.md)
 
 ## 它解决什么问题
 
@@ -212,10 +212,10 @@ docs/        设计、格式、测试、参考与实测记录
 - CLI 依赖 `moonbitlang/async` 与 `moonbitlang/x` 的原生文件系统 API，因此 0.1.0 声明 native-only；纯解析／模型代码没有绑定 OS API。
 - SREC parser 当前处理单个记录块；不接受 S4。writer 没有入口点时按格式需要输出地址 0 的终止记录并产生 warning。
 - BIN 不保存入口、header 或 record provenance；转换时会产生相应 warning。
-- 当前仓库 fixture 均根据公开格式资料原创。尚未记录第三方工具的交叉兼容实测，因此不声称“100% compatible”。
+- 当前仓库 fixture 均根据公开格式资料原创。IntelHex 2.3.0 与 bincopy 20.1.1 的实测结果见 [COMPATIBILITY_REPORT.md](docs/COMPATIBILITY_REPORT.md)；有限样例通过不代表兼容全部供应商方言。
 - 文件写入采用同目录临时文件、`sync` 与 rename；未提供目录 `fsync` 的断电事务保证，也不检测同长度并发改写。
 
-路线图包括：外部工具交叉兼容矩阵、多 block S-Record、可选 target profile 文件、流式超大文件输入，以及在 MoonBit 多后端 IO 成熟后拆分可移植 CLI。当前限制和明确不支持项以 [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) 为准。
+路线图包括：使用 SRecord／objcopy 扩展兼容矩阵、多 block S-Record、可选 target profile 文件、流式超大文件输入，以及在 MoonBit 多后端 IO 成熟后拆分可移植 CLI。当前限制和明确不支持项以 [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) 为准。
 
 ## 参与开发
 
