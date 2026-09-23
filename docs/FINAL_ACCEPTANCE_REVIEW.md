@@ -12,11 +12,13 @@
 | 测试覆盖 | `moon coverage analyze -- -f summary` 为 1,537／2,018 instrumented points（76.16%）；CLI 进程与示例入口未被此测试覆盖率统计覆盖，另外执行了真实进程测试。 |
 | CLI 正常路径 | `inspect`、`verify`、HEX↔SREC、HEX→BIN、BIN→HEX/SREC、`merge`、`extract`、`diff`、`gate` 共 11 条 README 主流程实际执行；除变化 `diff` 按约定返回 1 外均返回 0。两个 `examples` 均实际运行。 |
 | CLI 拒绝路径 | 损坏 checksum 返回 2；目标合同不合格返回 1；错误页大小返回 2。 |
-| 打包与发布 | `moon package --list` 生成 `SongYZZZ-moon-firmware-0.1.0.zip`。93 个条目；包清单未包含 `.tools`、本地凭据、构建目录或临时输出。`moon publish` 经提取包再次 `moon check` 后返回 `Server status: 200 OK`；随后 `moon search SongYZZZ/moon-firmware --json` 返回 0.1.0。 |
+| 打包与发布 | `moon package --list` 生成 `SongYZZZ-moon-firmware-0.1.0.zip`。94 个条目；包清单未包含 `.tools`、本地凭据、构建目录或临时输出。`moon publish` 经提取包再次 `moon check` 后返回 `Server status: 200 OK`；随后 `moon search SongYZZZ/moon-firmware --json` 返回 0.1.0。 |
 | 外部兼容性 | 本次重新用 IntelHex 2.3.0 读取本项目 HEX，用 bincopy 20.1.1 读取本项目 SREC；bincopy 生成无终止记录 SREC 后，本项目宽松模式给出 warning，地址级 diff 为 0。完整命令和语义限制见 `COMPATIBILITY_REPORT.md`。 |
 | 开发记录 | 检查前已有 21 个连续 Git commit；本次修复和审查另行提交。 |
 
 统计 `git ls-files '*.mbt'`，有效行定义为非空且非纯 `//` 注释行，排除生成文件、缓存、测试和示例：核心 5,094 物理行／4,414 有效行；测试 3,047／2,529；benchmark 87／80；示例 33／31。总计 8,261 物理行／7,054 有效行。行数只作为可复查规模，不代替功能质量判断。
+
+GitHub Actions 已在提交 `82e4b98` 完整通过：[CI run 35882612226](https://github.com/SongYZZZ/moon-firmware/actions/runs/35882612226)。Mooncakes 0.1.0 发布源码对应提交 `0a9ed0b`；之后仅更新 CI 配置与审查、发布文档，MoonBit 实现未变。
 
 ## 本次发现并修复
 
