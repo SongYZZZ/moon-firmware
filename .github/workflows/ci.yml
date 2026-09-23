@@ -11,8 +11,9 @@ jobs:
       - run: moon version --all
       - run: moon fmt --check
       - run: moon update
-      - run: moon check
-      - run: moon test
+      - run: moon check --deny-warn
+      - run: moon test --deny-warn
+      - run: moon info
       - run: moon build
       - run: moon run cmd/moon-firmware -- inspect tests/fixtures/basic.hex
       - run: moon run cmd/moon-firmware -- verify tests/fixtures/basic.hex

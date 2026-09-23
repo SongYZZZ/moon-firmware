@@ -137,6 +137,11 @@ fn checked_release_options(
   if options.ram.length() > 32 {
     raise release_option_error("release target permits at most 32 RAM ranges")
   }
+  for range in options.ram {
+    if range.is_empty() {
+      raise release_option_error("RAM regions must be non-empty")
+    }
+  }
   if !valid_alignment(options.page_size) ||
     options.flash.start % options.page_size.to_int64() != 0L ||
     options.flash.end % options.page_size.to_int64() != 0L {
@@ -145,7 +150,7 @@ fn checked_release_options(
     )
   }
   if options.vector_address < options.flash.start ||
-    options.vector_address + 8L > options.flash.end {
+    options.vector_address > options.flash.end - 8L {
     raise release_option_error("vector table must fit inside the Flash range")
   }
   if options.stack_alignment < 1 ||

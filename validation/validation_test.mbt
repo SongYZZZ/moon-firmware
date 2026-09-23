@@ -385,3 +385,39 @@ test "Cortex-M release target validates page alignment and vector bounds" {
   }
   assert_true(caught)
 }
+
+///|
+test "Cortex-M release target rejects empty RAM regions" {
+  let image = @model.FirmwareImage::new()
+  let mut caught = false
+  let empty_ram = @model.AddressRange::new(0x20000000L, 0x20000000L)
+  ignore(
+    validate_cortex_m_release(image, { ..cortex_target(), ram: [empty_ram], }),
+  ) catch {
+    @model.FirmwareError(d) => {
+      caught = true
+      assert_eq(d.code, InvalidOption)
+    }
+    _ => fail("expected FirmwareError")
+  }
+  assert_true(caught)
+}
+
+///|
+test "Cortex-M release target rejects overflowing vector addresses" {
+  let image = @model.FirmwareImage::new()
+  let mut caught = false
+  ignore(
+    validate_cortex_m_release(image, {
+      ..cortex_target(),
+      vector_address: 9223372036854775807L,
+    }),
+  ) catch {
+    @model.FirmwareError(d) => {
+      caught = true
+      assert_eq(d.code, InvalidOption)
+    }
+    _ => fail("expected FirmwareError")
+  }
+  assert_true(caught)
+}
