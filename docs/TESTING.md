@@ -29,7 +29,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-当前完整测试结果为 239／239 通过。`moon coverage analyze -- -f summary` 报告 1,531／2,014 个可插桩点命中，即 76.02%。CLI 和 example main 不由普通 test runner 调用，因此还执行独立 smoke tests。
+当前完整测试结果为 241／241 通过。`moon coverage analyze -- -f summary` 报告 1,537／2,018 个可插桩点命中，即 76.16%。CLI 和 example main 不由普通 test runner 调用，因此还执行独立 smoke tests。
 
 ## 测试构成
 

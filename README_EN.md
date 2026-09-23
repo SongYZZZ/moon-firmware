@@ -155,7 +155,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-The current local result is 239 test entries passed, including hundreds of fixed-seed generated cases. Coverage is 1,531 of 2,014 instrumented points, or 76.02%. See [BENCHMARKS.md](docs/BENCHMARKS.md) for measured performance. CI runs format, check, test, build, and a release-gate smoke test on Ubuntu native.
+The current local result is 241 test entries passed, including hundreds of fixed-seed generated cases. Coverage is 1,537 of 2,018 instrumented points, or 76.16%. See [BENCHMARKS.md](docs/BENCHMARKS.md) for measured performance. CI runs format, check, test, API inspection, build, and a release-gate smoke test on Ubuntu native.
 
 ## Layout
 
@@ -177,7 +177,7 @@ docs/        design, format, tests, references, measurements
 
 ## Mooncakes package metadata
 
-The module name is `SongYZZZ/moon-firmware`. Repository, license, description, keywords, and README metadata are present, and `moon package` successfully validates and produces the 0.1.0 archive.
+The module name is `SongYZZZ/moon-firmware`. Version 0.1.0 was published with `moon publish` and is returned by `moon search SongYZZZ/moon-firmware --json`; see its [Mooncakes package page](https://mooncakes.io/docs/SongYZZZ/moon-firmware).
 
 ## Known limitations
 

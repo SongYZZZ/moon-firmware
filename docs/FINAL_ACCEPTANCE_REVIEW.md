@@ -12,7 +12,7 @@
 | 测试覆盖 | `moon coverage analyze -- -f summary` 为 1,537／2,018 instrumented points（76.16%）；CLI 进程与示例入口未被此测试覆盖率统计覆盖，另外执行了真实进程测试。 |
 | CLI 正常路径 | `inspect`、`verify`、HEX↔SREC、HEX→BIN、BIN→HEX/SREC、`merge`、`extract`、`diff`、`gate` 共 11 条 README 主流程实际执行；除变化 `diff` 按约定返回 1 外均返回 0。两个 `examples` 均实际运行。 |
 | CLI 拒绝路径 | 损坏 checksum 返回 2；目标合同不合格返回 1；错误页大小返回 2。 |
-| 打包 | `moon package --list` 生成 `SongYZZZ-moon-firmware-0.1.0.zip`。93 个条目；包清单未包含 `.tools`、本地凭据、构建目录或临时输出。 |
+| 打包与发布 | `moon package --list` 生成 `SongYZZZ-moon-firmware-0.1.0.zip`。93 个条目；包清单未包含 `.tools`、本地凭据、构建目录或临时输出。`moon publish` 经提取包再次 `moon check` 后返回 `Server status: 200 OK`；随后 `moon search SongYZZZ/moon-firmware --json` 返回 0.1.0。 |
 | 外部兼容性 | 本次重新用 IntelHex 2.3.0 读取本项目 HEX，用 bincopy 20.1.1 读取本项目 SREC；bincopy 生成无终止记录 SREC 后，本项目宽松模式给出 warning，地址级 diff 为 0。完整命令和语义限制见 `COMPATIBILITY_REPORT.md`。 |
 | 开发记录 | 检查前已有 21 个连续 Git commit；本次修复和审查另行提交。 |
 
@@ -23,6 +23,7 @@
 1. `CortexMReleaseOptions` 原先可接受空 RAM 区间。这使无效的目标合同有机会进入向量校验；现在每个 RAM 区间必须非空。
 2. 向量地址范围检查原先先执行 `vector_address + 8`，极端 `Int64` 参数会溢出。现在使用 `vector_address > flash.end - 8`，并以最大 `Int64` 参数新增回归测试。
 3. CI 原先未以 warning 为错误，也未执行 `moon info`。现在执行 `check --deny-warn`、`test --deny-warn` 和 `info`。
+4. 首次推送的严格 CI 在 runner 的最新 MoonBit 上因 `implicit_impl_as_method` 弃用告警失败；该告警在本地 `moonc 0.10.11` 尚未出现。CI 现通过已验证存在的 `hustcer/setup-moonbit@v1.22` 参数固定同版本工具链与 core，待后续升级时再单独迁移弃用 API。
 
 ## 能力与差异边界
 
@@ -32,7 +33,6 @@
 
 ## 验收仍需外部确认
 
-- Mooncakes 0.1.0 的实际发布及远端可检索状态，应在发布命令返回成功后补入本页；本地打包成功不等于发布成功。
 - 九月赛资格审核与最终验收属于组委会决定，仓库自查不能替代。官网所示截止时间与个别审核邮件的补交时间可能不同，应按发给参赛者的通知办理。
 - 组委会曾明确要求申报书不得由 AI 撰写。参赛者需亲自撰写、核实并提交符合该要求的一页说明；本自查不对现有申报文档的作者归属作保证。
 - 申请书中的应用场景使用可复现的小型样例，不等于已有真实生产用户；如有目标板实测或第三方使用证据，应由参赛者补充来源和结果。

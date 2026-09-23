@@ -183,7 +183,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-当前本地结果：239 个测试入口全部通过；其中包含数百组固定 seed 生成用例。覆盖工具报告 1,531／2,014 个可插桩点命中（76.02%）。性能数字与环境见 [BENCHMARKS.md](docs/BENCHMARKS.md)。CI 在 Ubuntu native 环境运行 format、check、test、build 和 release-gate smoke test。
+当前本地结果：241 个测试入口全部通过；其中包含数百组固定 seed 生成用例。覆盖工具报告 1,537／2,018 个可插桩点命中（76.16%）。性能数字与环境见 [BENCHMARKS.md](docs/BENCHMARKS.md)。CI 在 Ubuntu native 环境运行 format、check、test、API 检查、build 和 release-gate smoke test。
 
 ## 项目结构
 
@@ -205,7 +205,7 @@ docs/        设计、格式、测试、参考与实测记录
 
 ## Mooncakes 包元数据
 
-`moon.mod` 中的模块名为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。`moon package` 已验证配置并成功生成 0.1.0 包。
+`moon.mod` 中的模块名为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。0.1.0 已通过 `moon publish` 发布，并可由 `moon search SongYZZZ/moon-firmware --json` 检索；[Mooncakes 包页面](https://mooncakes.io/docs/SongYZZZ/moon-firmware)。
 
 ## 兼容性与限制
 

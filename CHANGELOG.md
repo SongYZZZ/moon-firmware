@@ -2,7 +2,7 @@
 
 本项目遵循语义化版本，日期使用 `YYYY-MM-DD`。
 
-## 0.1.0 — 2026-09-08
+## 0.1.0 — 2026-09-23
 
 首次黑客松参赛版本。
 
@@ -17,7 +17,7 @@
 - target region／entry 校验和 bounded touched-page flash plan。
 - Cortex-M Flash／RAM 合同、向量表语义与烧录页计划的一体化发布门禁。
 - image CRC／additive checksum、masked pattern、ASCII、word 与 Cortex-M vector 分析。
-- 239 个测试入口，包括固定 seed property tests、原创 fixture 和真实文件 IO。
+- 241 个测试入口，包括固定 seed property tests、原创 fixture 和真实文件 IO。
 - native benchmark、GitHub Actions、双语 README、设计／格式／测试／安全文档。
 
 ### Known limitations
@@ -25,4 +25,4 @@
 - CLI 0.1.0 为 native-only。
 - SREC input 只处理单 block，S4 和厂商私有类型不支持。
 - Intel writer canonicalize 为 Type 04，不生成 Type 02。
-- 尚未完成第三方工具交叉兼容矩阵。
+- IntelHex 2.3.0 与 bincopy 20.1.1 已完成有限样例交叉验证；未覆盖所有供应商方言。
