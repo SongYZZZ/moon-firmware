@@ -2,7 +2,7 @@
 
 MoonFirmware 是用 MoonBit 独立实现的 MCU 固件发布验证工具库与原生 CLI。它读取 Intel HEX、Motorola S-Record 和 BIN，在统一的稀疏地址空间中完成格式校验、镜像装配、地址级 diff、Cortex-M 发布门禁与烧录页计划。
 
-作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.1
+作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.2
 
 [English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [应用场景](docs/APPLICATION_SCENARIOS.md) · [成熟工具对照](docs/COMPATIBILITY_REPORT.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md) · [设计](docs/DESIGN.md)
 
@@ -211,11 +211,11 @@ docs/        设计、格式、测试、参考与实测记录
 
 ## Mooncakes 包元数据
 
-`moon.mod` 中的模块名为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。0.1.0 已发布；0.1.1 将在 0.10.14 完整验证后发布至 Mooncakes，并更新可检索版本；[Mooncakes 包页面](https://mooncakes.io/docs/SongYZZZ/moon-firmware)。
+`moon.mod` 中的模块名为 `SongYZZZ/moon-firmware`，版本、仓库、许可证、描述、关键词和 README 均已填写。0.1.0 和 0.1.1 已发布；0.1.2 是本次验收文档修订版，将在 CI 通过后发布至 Mooncakes。[Mooncakes 包页面](https://mooncakes.io/docs/SongYZZZ/moon-firmware)。
 
 ## 兼容性与限制
 
-- CLI 依赖 `moonbitlang/async` 与 `moonbitlang/x` 的原生文件系统 API，因此 0.1.1 声明 native-only；纯解析／模型代码没有绑定 OS API。
+- CLI 依赖 `moonbitlang/async` 与 `moonbitlang/x` 的原生文件系统 API，因此 0.1.2 声明 native-only；纯解析／模型代码没有绑定 OS API。
 - SREC parser 当前处理单个记录块；不接受 S4。writer 没有入口点时按格式需要输出地址 0 的终止记录并产生 warning。
 - BIN 不保存入口、header 或 record provenance；转换时会产生相应 warning。
 - 当前仓库 fixture 均根据公开格式资料原创。IntelHex 2.3.0 与 bincopy 20.1.1 的实测结果见 [COMPATIBILITY_REPORT.md](docs/COMPATIBILITY_REPORT.md)；有限样例通过不代表兼容全部供应商方言。

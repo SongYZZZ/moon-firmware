@@ -2,7 +2,7 @@
 
 MoonFirmware is an MCU firmware release-validation library and native CLI independently implemented in MoonBit. It reads Intel HEX, Motorola S-Record, and BIN artifacts, then performs format validation, image assembly, address-aware diff, Cortex-M release gates, and flash-page planning in one sparse address model.
 
-Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.1
+Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.2
 
 [中文 README](README.md) · [Runnable scenarios](docs/APPLICATION_SCENARIOS.md) · [Mature-tool comparison](docs/COMPATIBILITY_REPORT.md) · [Prior-art boundary](docs/PRIOR_ART_AND_BOUNDARY.md) · [Design](docs/DESIGN.md)
 
@@ -183,11 +183,11 @@ docs/        design, format, tests, references, measurements
 
 ## Mooncakes package metadata
 
-The module name is `SongYZZZ/moon-firmware`. Version 0.1.0 is published; version 0.1.1 will be published after full verification with MoonBit 0.10.14. See the [Mooncakes package page](https://mooncakes.io/docs/SongYZZZ/moon-firmware).
+The module name is `SongYZZZ/moon-firmware`. Versions 0.1.0 and 0.1.1 have been published. Version 0.1.2 contains this acceptance documentation update and will be published after CI passes. See the [Mooncakes package page](https://mooncakes.io/docs/SongYZZZ/moon-firmware).
 
 ## Known limitations
 
-- The CLI uses native file-system APIs from `moonbitlang/async` and `moonbitlang/x`; 0.1.1 is declared native-only. Parser and model code itself has no OS dependency.
+- The CLI uses native file-system APIs from `moonbitlang/async` and `moonbitlang/x`; 0.1.2 is declared native-only. Parser and model code itself has no OS dependency.
 - The S-Record parser handles one block and rejects S4. When an image has no entry, the writer emits a format-required zero termination address and reports a warning.
 - BIN cannot retain entry points, S0 headers, or record provenance; conversion reports losses.
 - All committed fixtures are original examples made from public format descriptions. See [COMPATIBILITY_REPORT.md](docs/COMPATIBILITY_REPORT.md) for tests with IntelHex 2.3.0 and bincopy 20.1.1; these finite samples do not establish compatibility with every vendor dialect.
