@@ -3,7 +3,7 @@ fn rejected(
   text : String,
   options? : @model.ParseOptions = @model.ParseOptions::default(),
 ) -> @model.Diagnostic raise {
-  try parse_document(text, options~) catch {
+  try @srec.parse_document(text, options~) catch {
     @model.FirmwareError(d) => d
   } noraise {
     _ => fail("expected rejection")
@@ -12,7 +12,9 @@ fn rejected(
 
 ///|
 test "S1 manually calculated count checksum" {
-  let image = parse_document("S107001001020304DE\nS5030001FB\nS9030010EC\n")
+  let image = @srec.parse_document(
+    "S107001001020304DE\nS5030001FB\nS9030010EC\n",
+  )
   assert_eq(image.memory.lowest_address(), Some(16L))
   assert_eq(image.memory.segments()[0].data, b"\x01\x02\x03\x04")
   assert_eq(image.entry, Some(@model.EntryPoint::Linear(16L)))
@@ -20,34 +22,34 @@ test "S1 manually calculated count checksum" {
 
 ///|
 test "S0 header byte preservation" {
-  let header = Record::new(0, 0L, b"MoonFirmware\x00\xFF").encode()
-  let image = parse_document(header + "\nS9030000FC")
+  let header = @srec.Record::new(0, 0L, b"MoonFirmware\x00\xFF").encode()
+  let image = @srec.parse_document(header + "\nS9030000FC")
   assert_eq(image.metadata.header, Some(b"MoonFirmware\x00\xFF"))
   assert_eq(
-    parse_document(encode(image)).metadata.header,
+    @srec.parse_document(@srec.encode(image)).metadata.header,
     image.metadata.header,
   )
 }
 
 ///|
 test "S2 and S8 24-bit address" {
-  let text = Record::new(2, 0xABCDEFL, b"x").encode() +
+  let text = @srec.Record::new(2, 0xABCDEFL, b"x").encode() +
     "\n" +
-    Record::new(8, 0xABCDEFL, b"").encode()
-  assert_eq(parse_document(text).memory.lowest_address(), Some(0xABCDEFL))
+    @srec.Record::new(8, 0xABCDEFL, b"").encode()
+  assert_eq(@srec.parse_document(text).memory.lowest_address(), Some(0xABCDEFL))
 }
 
 ///|
 test "S3 and S7 32-bit address" {
-  let text = Record::new(3, 0xFFFFFFFFL, b"x").encode() +
+  let text = @srec.Record::new(3, 0xFFFFFFFFL, b"x").encode() +
     "\n" +
-    Record::new(7, 0xFFFFFFFFL, b"").encode()
-  assert_eq(parse_document(text).memory.read(0xFFFFFFFFL), Some(b'x'))
+    @srec.Record::new(7, 0xFFFFFFFFL, b"").encode()
+  assert_eq(@srec.parse_document(text).memory.read(0xFFFFFFFFL), Some(b'x'))
 }
 
 ///|
 test "S6 count accepted" {
-  let image = parse_document("S104000041BA\nS604000001FA\nS9030000FC")
+  let image = @srec.parse_document("S104000041BA\nS604000001FA\nS9030000FC")
   assert_eq(image.metadata.record_counts[6], 1)
 }
 
@@ -105,7 +107,7 @@ test "missing termination strict" {
 
 ///|
 test "missing termination permissive warns" {
-  let image = parse_document("S104000041BA", options={
+  let image = @srec.parse_document("S104000041BA", options={
     ..@model.ParseOptions::default(),
     mode: Permissive,
   })
@@ -160,11 +162,11 @@ test "data after termination fails" {
 ///|
 test "mixed widths strict fails" {
   let text = "S104000041BA\n" +
-    Record::new(2, 100L, b"b").encode() +
+    @srec.Record::new(2, 100L, b"b").encode() +
     "\nS804000000FB"
   assert_eq(rejected(text).code, InvalidRecord)
   assert_eq(
-    parse_document(text, options={
+    @srec.parse_document(text, options={
       ..@model.ParseOptions::default(),
       mode: Permissive,
     }).warnings.length(),
@@ -198,7 +200,7 @@ test "empty document fails" {
 ///|
 test "lowercase hex and CRLF accepted" {
   assert_eq(
-    parse_document("S1040000ab50\r\nS9030000fc").memory.payload_size(),
+    @srec.parse_document("S1040000ab50\r\nS9030000fc").memory.payload_size(),
     1,
   )
 }
@@ -208,9 +210,9 @@ test "writer chooses width from highest byte" {
   for pair in [(65535L, 1), (65536L, 2), (0x1000000L, 3)] {
     let (address, kind) = pair
     let image = @model.FirmwareImage::from_binary(b"x", address)
-    let text = encode(image)
+    let text = @srec.encode(image)
     assert_true(text.has_prefix("S\{kind}"))
-    assert_true(parse_document(text).memory.same_memory(image.memory))
+    assert_true(@srec.parse_document(text).memory.same_memory(image.memory))
   }
 }
 
@@ -220,14 +222,17 @@ test "writer chooses width from entry even without data" {
     ..@model.FirmwareImage::new(),
     entry: Some(@model.EntryPoint::Linear(0x08000000L)),
   }
-  assert_true(encode(image).contains("S7"))
+  assert_true(@srec.encode(image).contains("S7"))
 }
 
 ///|
 test "writer forced width refuses truncation" {
   let image = @model.FirmwareImage::from_binary(b"x", 65536L)
   try
-    encode(image, options={ ..WriterOptions::default(), address_width: Bits16, })
+    @srec.encode(image, options={
+      ..@srec.WriterOptions::default(),
+      address_width: Bits16,
+    })
   catch {
     @model.FirmwareError(d) => assert_eq(d.code, AddressOverflow)
   } noraise {
@@ -238,19 +243,19 @@ test "writer forced width refuses truncation" {
 ///|
 test "writer S6 selected beyond 65535 records" {
   let image = @model.FirmwareImage::from_binary(Bytes::make(65536, b'x'), 0L)
-  let text = encode(image, options={
-    ..WriterOptions::default(),
+  let text = @srec.encode(image, options={
+    ..@srec.WriterOptions::default(),
     data_length: 1,
   })
   assert_true(text.contains("S604010000FA"))
-  assert_true(parse_document(text).memory.same_memory(image.memory))
+  assert_true(@srec.parse_document(text).memory.same_memory(image.memory))
 }
 
 ///|
 test "writer rejects invalid data length" {
   try
-    encode(@model.FirmwareImage::new(), options={
-      ..WriterOptions::default(),
+    @srec.encode(@model.FirmwareImage::new(), options={
+      ..@srec.WriterOptions::default(),
       data_length: 253,
     })
   catch {
@@ -264,14 +269,14 @@ test "writer rejects invalid data length" {
 test "writer optional count and deterministic roundtrip" {
   let image = @model.FirmwareImage::from_binary(b"abc", 16L)
   let options = {
-    ..WriterOptions::default(),
+    ..@srec.WriterOptions::default(),
     emit_count: false,
     uppercase: false,
     line_ending: CRLF,
   }
-  let text = encode(image, options~)
+  let text = @srec.encode(image, options~)
   assert_true(!text.contains("S5"))
-  assert_eq(encode(parse_document(text), options~), text)
+  assert_eq(@srec.encode(@srec.parse_document(text), options~), text)
 }
 
 ///|
@@ -280,25 +285,25 @@ test "writer segment flattening requires opt-in" {
     ..@model.FirmwareImage::new(),
     entry: Some(@model.EntryPoint::Segment(0x1000, 16)),
   }
-  try encode(image) catch {
+  try @srec.encode(image) catch {
     @model.FirmwareError(d) => assert_eq(d.code, InvalidOption)
   } noraise {
     _ => fail("expected entry representation failure")
   }
-  let text = encode(image, options={
-    ..WriterOptions::default(),
+  let text = @srec.encode(image, options={
+    ..@srec.WriterOptions::default(),
     flatten_segment_entry: true,
   })
   assert_eq(
-    parse_document(text).entry,
+    @srec.parse_document(text).entry,
     Some(@model.EntryPoint::Linear(0x10010L)),
   )
 }
 
 ///|
 test "SREC checksum differs from Intel rule" {
-  assert_eq(compute_checksum(b"\x03\x00\x00"), b'\xFC')
-  assert_true(verify_checksum(b"\x03\x00\x00\xFC"))
-  assert_true(!verify_checksum(b"\x03\x00\x00\xFD"))
-  assert_true(!verify_checksum(b""))
+  assert_eq(@srec.compute_checksum(b"\x03\x00\x00"), b'\xFC')
+  assert_true(@srec.verify_checksum(b"\x03\x00\x00\xFC"))
+  assert_true(!@srec.verify_checksum(b"\x03\x00\x00\xFD"))
+  assert_true(!@srec.verify_checksum(b""))
 }

@@ -1,6 +1,6 @@
 ///|
 fn rejected(args : Array[String]) -> @model.Diagnostic raise {
-  try parse_arguments(args) catch {
+  try @cli.parse_arguments(args) catch {
     @model.FirmwareError(d) => d
   } noraise {
     _ => fail("expected argument rejection")
@@ -9,13 +9,13 @@ fn rejected(args : Array[String]) -> @model.Diagnostic raise {
 
 ///|
 test "help requires no files" {
-  assert_true(parse_arguments([]) is Help(""))
-  assert_true(parse_arguments(["inspect", "--help"]) is Help("inspect"))
+  assert_true(@cli.parse_arguments([]) is Help(""))
+  assert_true(@cli.parse_arguments(["inspect", "--help"]) is Help("inspect"))
 }
 
 ///|
 test "version is explicit request" {
-  assert_true(parse_arguments(["--version"]) is Version)
+  assert_true(@cli.parse_arguments(["--version"]) is Version)
 }
 
 ///|
@@ -36,7 +36,7 @@ test "missing output is error" {
 ///|
 test "convert positional output" {
   assert_true(
-    parse_arguments(["convert", "a.hex", "b.srec"])
+    @cli.parse_arguments(["convert", "a.hex", "b.srec"])
     is Run({ output: Some("b.srec"), .. }),
   )
 }
@@ -44,7 +44,7 @@ test "convert positional output" {
 ///|
 test "convert binary base option" {
   assert_true(
-    parse_arguments([
+    @cli.parse_arguments([
       "convert", "a.bin", "b.hex", "--base-address", "0x08000000",
     ])
     is Run({ base_address: Some(0x08000000L), .. }),
@@ -67,7 +67,7 @@ test "flag does not swallow assigned value" {
 ///|
 test "equal syntax parses numeric fill" {
   assert_true(
-    parse_arguments(["convert", "a.hex", "b.bin", "--fill=0xFF"])
+    @cli.parse_arguments(["convert", "a.hex", "b.bin", "--fill=0xFF"])
     is Run({ convert_options: { fill: Some(b'\xFF'), .. }, .. }),
   )
 }
@@ -75,7 +75,7 @@ test "equal syntax parses numeric fill" {
 ///|
 test "double dash allows dash-prefixed paths" {
   assert_true(
-    parse_arguments(["inspect", "--", "-file.hex"])
+    @cli.parse_arguments(["inspect", "--", "-file.hex"])
     is Run({ inputs: ["-file.hex"], .. }),
   )
 }
@@ -83,7 +83,7 @@ test "double dash allows dash-prefixed paths" {
 ///|
 test "extract end is inclusive" {
   assert_true(
-    parse_arguments([
+    @cli.parse_arguments([
       "extract", "a.hex", "--start", "16", "--end", "19", "-o", "b.hex",
     ])
     is Run({ range: Some({ start: 16L, end: 20L, }), .. }),
@@ -119,7 +119,9 @@ test "unknown output extension requires explicit format" {
 ///|
 test "explicit output format accepted" {
   assert_true(
-    parse_arguments(["convert", "a.hex", "b.out", "--output-format", "srec"])
+    @cli.parse_arguments([
+      "convert", "a.hex", "b.out", "--output-format", "srec",
+    ])
     is Run({ convert_options: { format: SRecord, .. }, .. }),
   )
 }
@@ -148,7 +150,7 @@ test "text convert range cannot be silently ignored" {
 ///|
 test "gate parses explicit Cortex-M target ranges" {
   assert_true(
-    parse_arguments([
+    @cli.parse_arguments([
       "gate", "release.hex", "--flash-start", "0x08000000", "--flash-end", "0x080FFFFF",
       "--ram-start", "0x20000000", "--ram-end", "0x2001FFFF", "--page-size", "0x400",
       "--vector-address", "0x08008000",

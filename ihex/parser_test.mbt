@@ -3,7 +3,7 @@ fn rejected(
   text : String,
   options? : @model.ParseOptions = @model.ParseOptions::default(),
 ) -> @model.Diagnostic raise {
-  try parse_document(text, options~) catch {
+  try @ihex.parse_document(text, options~) catch {
     @model.FirmwareError(d) => d
   } noraise {
     _ => fail("expected rejection")
@@ -37,14 +37,14 @@ test "empty document fails" {
 
 ///|
 test "EOF-only image" {
-  let image = parse_document(":00000001FF\n")
+  let image = @ihex.parse_document(":00000001FF\n")
   assert_eq(image.memory.payload_size(), 0)
   assert_eq(image.metadata.record_counts[1], 1)
 }
 
 ///|
 test "basic manually calculated checksum" {
-  let image = parse_document(":0400100001020304E2\n:00000001FF\n")
+  let image = @ihex.parse_document(":0400100001020304E2\n:00000001FF\n")
   assert_eq(image.memory.segments()[0].data, b"\x01\x02\x03\x04")
   assert_eq(image.memory.lowest_address(), Some(16L))
 }
@@ -77,8 +77,8 @@ test "type mutation without checksum update" {
 ///|
 test "hex letter cases are equivalent" {
   assert_true(
-    parse_document(":01000000ab54\n:00000001ff").memory.same_memory(
-      parse_document(":01000000AB54\n:00000001FF").memory,
+    @ihex.parse_document(":01000000ab54\n:00000001ff").memory.same_memory(
+      @ihex.parse_document(":01000000AB54\n:00000001FF").memory,
     ),
   )
 }
@@ -86,8 +86,8 @@ test "hex letter cases are equivalent" {
 ///|
 test "CRLF and LF equivalent" {
   assert_true(
-    parse_document(":00000001FF\r\n").semantic_equal(
-      parse_document(":00000001FF\n"),
+    @ihex.parse_document(":00000001FF\r\n").semantic_equal(
+      @ihex.parse_document(":00000001FF\n"),
     ),
   )
 }
@@ -122,7 +122,7 @@ test "missing EOF strict" {
 
 ///|
 test "missing EOF permissive warns" {
-  let image = parse_document(wire(0, 0, b"a"), options={
+  let image = @ihex.parse_document(wire(0, 0, b"a"), options={
     ..@model.ParseOptions::default(),
     mode: Permissive,
   })
@@ -137,7 +137,7 @@ test "duplicate EOF strict" {
 ///|
 test "duplicate EOF permissive warns" {
   assert_eq(
-    parse_document(":00000001FF\n:00000001FF", options={
+    @ihex.parse_document(":00000001FF\n:00000001FF", options={
       ..@model.ParseOptions::default(),
       mode: Permissive,
     }).warnings.length(),
@@ -168,7 +168,7 @@ test "control address must be zero" {
 
 ///|
 test "extended segment shifts by four" {
-  let image = parse_document(
+  let image = @ihex.parse_document(
     wire(2, 0, b"\x12\x34") + wire(0, 0x10, b"x") + ":00000001FF",
   )
   assert_eq(image.memory.lowest_address(), Some(0x12350L))
@@ -176,7 +176,7 @@ test "extended segment shifts by four" {
 
 ///|
 test "extended linear shifts by sixteen" {
-  let image = parse_document(
+  let image = @ihex.parse_document(
     wire(4, 0, b"\x08\x00") + wire(0, 0x10, b"x") + ":00000001FF",
   )
   assert_eq(image.memory.lowest_address(), Some(0x08000010L))
@@ -188,19 +188,23 @@ test "segment and linear base replace each other" {
     wire(2, 0, b"\x00\x10") +
     wire(0, 0, b"x") +
     ":00000001FF"
-  assert_eq(parse_document(text).memory.lowest_address(), Some(0x100L))
+  assert_eq(@ihex.parse_document(text).memory.lowest_address(), Some(0x100L))
 }
 
 ///|
 test "start segment preserves both registers" {
-  let image = parse_document(wire(3, 0, b"\x12\x34\x56\x78") + ":00000001FF")
+  let image = @ihex.parse_document(
+    wire(3, 0, b"\x12\x34\x56\x78") + ":00000001FF",
+  )
   assert_eq(image.entry, Some(@model.EntryPoint::Segment(0x1234, 0x5678)))
   assert_eq(image.memory.payload_size(), 0)
 }
 
 ///|
 test "start linear preserves thumb bit" {
-  let image = parse_document(wire(5, 0, b"\x08\x00\x01\x91") + ":00000001FF")
+  let image = @ihex.parse_document(
+    wire(5, 0, b"\x08\x00\x01\x91") + ":00000001FF",
+  )
   assert_eq(image.entry, Some(@model.EntryPoint::Linear(0x08000191L)))
 }
 
@@ -216,7 +220,7 @@ test "unsupported type is not data" {
 
 ///|
 test "linear record carries over 64 KiB" {
-  let image = parse_document(
+  let image = @ihex.parse_document(
     wire(4, 0, b"\x08\x00") + wire(0, 65535, b"ab") + ":00000001FF",
   )
   assert_eq(image.memory.read(0x08010000L), Some(b'b'))
@@ -224,7 +228,7 @@ test "linear record carries over 64 KiB" {
 
 ///|
 test "segment record wraps offset within segment" {
-  let image = parse_document(
+  let image = @ihex.parse_document(
     wire(2, 0, b"\x10\x00") + wire(0, 65535, b"ab") + ":00000001FF",
   )
   assert_eq(image.memory.read(0x1FFFFL), Some(b'a'))
@@ -241,7 +245,7 @@ test "linear 32-bit overflow rejected" {
 
 ///|
 test "sparse records retain gaps" {
-  let image = parse_document(
+  let image = @ihex.parse_document(
     wire(0, 0x1000, b"ab") + wire(0, 0x2000, b"cd") + ":00000001FF",
   )
   assert_eq(image.memory.segment_count(), 2)
@@ -261,7 +265,7 @@ test "permissive mode never ignores corruption" {
 
 ///|
 test "permissive BOM comments whitespace warning" {
-  let image = parse_document("\uFEFF ; header\n\n  :00000001FF \n", options={
+  let image = @ihex.parse_document("\uFEFF ; header\n\n  :00000001FF \n", options={
     ..@model.ParseOptions::default(),
     mode: Permissive,
   })
@@ -304,6 +308,6 @@ test "overlap failure retains source line" {
 
 ///|
 test "checksum empty and known body" {
-  assert_true(!verify_checksum(b""))
-  assert_eq(compute_checksum(b"\x00\x00\x00\x01"), b'\xFF')
+  assert_true(!@ihex.verify_checksum(b""))
+  assert_eq(@ihex.compute_checksum(b"\x00\x00\x00\x01"), b'\xFF')
 }

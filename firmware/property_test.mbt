@@ -88,20 +88,20 @@ test "512 fixed-seed sparse images round-trip through HEX SREC and both conversi
     assert_eq(from_srec.metadata.header, original.metadata.header)
     assert_eq(@ihex.encode(original, options=hex_options), hex_text)
     assert_eq(@srec.encode(original, options=srec_options), srec_text)
-    let hex_to_srec = convert(from_hex, {
-      ..ConvertOptions::new(SRecord),
+    let hex_to_srec = @firmware.convert(from_hex, {
+      ..@firmware.ConvertOptions::new(SRecord),
       srecord: srec_options,
     })
-    let srec_to_hex = convert(from_srec, {
-      ..ConvertOptions::new(IntelHex),
+    let srec_to_hex = @firmware.convert(from_srec, {
+      ..@firmware.ConvertOptions::new(IntelHex),
       intel_hex: hex_options,
     })
     assert_true(
-      original.semantic_equal(load_firmware(hex_to_srec.bytes)),
+      original.semantic_equal(@firmware.load_firmware(hex_to_srec.bytes)),
       msg="HEX to SREC trial \{trial}",
     )
     assert_true(
-      original.semantic_equal(load_firmware(srec_to_hex.bytes)),
+      original.semantic_equal(@firmware.load_firmware(srec_to_hex.bytes)),
       msg="SREC to HEX trial \{trial}",
     )
   }
@@ -119,14 +119,14 @@ test "128 fixed-seed segmented entries preserve exact CS IP or explicitly flatte
     }
     let from_hex = @ihex.parse_document(@ihex.encode(original))
     assert_true(original.semantic_equal(from_hex))
-    let converted = convert(original, {
-      ..ConvertOptions::new(SRecord),
+    let converted = @firmware.convert(original, {
+      ..@firmware.ConvertOptions::new(SRecord),
       srecord: {
         ..@srec.WriterOptions::default(),
         flatten_segment_entry: true,
       },
     })
-    let flattened = load_firmware(converted.bytes)
+    let flattened = @firmware.load_firmware(converted.bytes)
     assert_true(original.memory.same_memory(flattened.memory))
     match (original.entry, flattened.entry) {
       (Some(before), Some(after)) =>
@@ -141,8 +141,8 @@ test "128 fixed-seed segmented entries preserve exact CS IP or explicitly flatte
 test "absent entry round-trips through HEX and SREC reports its zero default" {
   let image = @model.FirmwareImage::from_binary(b"entryless", 0xFFFFFFFFL - 8L)
   assert_true(image.semantic_equal(@ihex.parse_document(@ihex.encode(image))))
-  let output = convert(image, ConvertOptions::new(SRecord))
-  let restored = load_firmware(output.bytes)
+  let output = @firmware.convert(image, @firmware.ConvertOptions::new(SRecord))
+  let restored = @firmware.load_firmware(output.bytes)
   assert_true(image.memory.same_memory(restored.memory))
   assert_eq(restored.entry, Some(@model.EntryPoint::Linear(0L)))
   assert_eq(output.warnings.length(), 1)
@@ -202,7 +202,7 @@ test "256 randomized address diffs match independent dense reference categories"
         )
       }
     }
-    let actual = diff_images(left, right)
+    let actual = @firmware.diff_images(left, right)
     assert_eq(actual.only_left, reference_ranges(categories, 1, base))
     assert_eq(actual.only_right, reference_ranges(categories, 2, base))
     assert_eq(actual.changed, reference_ranges(categories, 3, base))
@@ -210,7 +210,7 @@ test "256 randomized address diffs match independent dense reference categories"
     assert_eq(actual.added_bytes, totals[2])
     assert_eq(actual.changed_bytes, totals[3])
     assert_eq(actual.identical_bytes, totals[4])
-    let reverse = diff_images(right, left)
+    let reverse = @firmware.diff_images(right, left)
     assert_eq(reverse.only_left, actual.only_right)
     assert_eq(reverse.only_right, actual.only_left)
     assert_eq(reverse.changed, actual.changed)
@@ -226,9 +226,9 @@ test "128 randomized extract erase and fill windows obey occupied-address semant
     let start = base + random.below(256).to_int64()
     let end = start + random.below(256).to_int64()
     let range = @model.AddressRange::new(start, end)
-    let extracted = extract_range(image, range)
-    let erased = remove_range(image, range)
-    let filled = fill_range(image, range, b'\xA5')
+    let extracted = @firmware.extract_range(image, range)
+    let erased = @firmware.remove_range(image, range)
+    let filled = @firmware.fill_range(image, range, b'\xA5')
     for address in start..<end {
       assert_eq(extracted.memory.read(address), image.memory.read(address))
       assert_eq(erased.memory.read(address), None)

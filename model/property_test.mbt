@@ -16,13 +16,13 @@ test "96 deterministic sparse mutation sequences match a dense overlap oracle" {
   let random = MemoryRandom::{ state: 632714L, }
   for trial in 0..<96 {
     let base = if trial % 2 == 0 { 0L } else { 0xFFFFFF00L }
-    let memory = MemoryMap::new()
+    let memory = @model.MemoryMap::new()
     let expected : Array[Byte?] = Array::make(256, None)
     for step in 0..<128 {
       let start = random.below(256)
       let length = random.below((256 - start).min(32) + 1)
       let policy = match step % 3 {
-        0 => OverlapPolicy::Reject
+        0 => @model.OverlapPolicy::Reject
         1 => AllowIdentical
         _ => Overwrite
       }
@@ -95,7 +95,7 @@ test "96 deterministic sparse mutation sequences match a dense overlap oracle" {
         assert_true(segments[i - 1].range().end < segments[i].start)
       }
     }
-    let window = AddressRange::new(base, base + 256L)
+    let window = @model.AddressRange::new(base, base + 256L)
     let binary = memory.to_binary(window, fill=b'\xA5')
     for i in 0..<256 {
       assert_eq(binary[i], expected[i].unwrap_or(b'\xA5'))
@@ -122,8 +122,8 @@ test "512 deterministic interval intersections and differences match set members
     let b = random.below(65).to_int64()
     let c = random.below(65).to_int64()
     let d = random.below(65).to_int64()
-    let left = AddressRange::new(base + a.min(b), base + a.max(b))
-    let right = AddressRange::new(base + c.min(d), base + c.max(d))
+    let left = @model.AddressRange::new(base + a.min(b), base + a.max(b))
+    let right = @model.AddressRange::new(base + c.min(d), base + c.max(d))
     let intersection = left.intersection(right)
     let differences = left.subtract(right)
     assert_eq(intersection, right.intersection(left))
@@ -162,7 +162,7 @@ test "512 deterministic interval intersections and differences match set members
 
 ///|
 test "immutable segment snapshots survive overwrite normalization and append" {
-  let memory = MemoryMap::new()
+  let memory = @model.MemoryMap::new()
   memory.insert(8L, b"before")
   let snapshot = memory.segments()
   memory.insert(9L, b"XX", policy=Overwrite)
@@ -175,7 +175,7 @@ test "immutable segment snapshots survive overwrite normalization and append" {
 
 ///|
 test "segment cap rejects the next sparse insertion without changing existing data" {
-  let memory = MemoryMap::new()
+  let memory = @model.MemoryMap::new()
   for i in 0..<65536 {
     memory.insert(i.to_int64() * 2L, b"x")
   }
@@ -195,11 +195,15 @@ test "segment cap rejects the next sparse insertion without changing existing da
 
 ///|
 test "zero byte binary budget permits only an empty address window" {
-  let memory = MemoryMap::new()
-  assert_eq(memory.to_binary(AddressRange::new(0L, 0L), max_size=0), b"")
+  let memory = @model.MemoryMap::new()
+  assert_eq(memory.to_binary(@model.AddressRange::new(0L, 0L), max_size=0), b"")
   assert_true(
     capture(() => {
-      memory.to_binary(AddressRange::new(0L, 1L), fill=b'\x00', max_size=0)
+      memory.to_binary(
+        @model.AddressRange::new(0L, 1L),
+        fill=b'\x00',
+        max_size=0,
+      )
     })
     is Err(FirmwareError({ code: ResourceLimit, .. })),
   )
@@ -207,7 +211,7 @@ test "zero byte binary budget permits only an empty address window" {
 
 ///|
 test "invalid parse limits fail independently before consuming text" {
-  let defaults = ParseOptions::default()
+  let defaults = @model.ParseOptions::default()
   for
     options in [
       { ..defaults, max_records: 0, },
