@@ -5,13 +5,13 @@
 验收使用项目内隔离工具链：
 
 ```text
-moon 0.1.20260827 (d0aaa07 2026-08-27)
-moonc v0.10.11+6ff76a5f9 (2026-08-28)
-moonrun 0.1.20260827
+moon 0.1.20260920 (914d7da 2026-09-20)
+moonc v0.10.14+7d59c7ec9 (2026-09-18)
+moonrun 0.1.20260920
 native backend
 ```
 
-Windows 版本为 Microsoft Windows NT 10.0.22621.0。项目不要求提交 `.tools`；贡献者可以使用同版本或更新的兼容稳定工具链。
+Windows 版本为 Microsoft Windows NT 10.0.22621.0。项目不要求提交 `.tools`；贡献者至少使用 MoonBit 0.10.14。
 
 ## 质量门
 

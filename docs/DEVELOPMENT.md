@@ -8,7 +8,9 @@ check, test, fmt, publish, package, bench and doc was inspected before implement
 The initial PATH toolchain was moon 0.1.20260819 / moonc 0.10.9. A newer official
 toolchain was installed under the ignored `.tools/moon` directory after the current
 `moonbitlang/async` package and hosted formatter required moon 0.1.20260827 / moonc
-0.10.11. The bundled core was built for native. No global user installation changed.
+0.10.11. On 2026-09-29 the official 0.10.14 toolchain was installed under the ignored
+`.tools/moon014` directory. Its exact build is `moonc 0.10.14+7d59c7ec9`; no global
+user installation changed.
 
 The exact public remote is https://github.com/SongYZZZ/moon-firmware. Repository
 ownership, remote URL and Apache-2.0 license metadata were verified before release.
