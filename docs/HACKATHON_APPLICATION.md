@@ -10,7 +10,7 @@
 
 ## 既有基础与新增核心贡献
 
-项目采用“复用开源基础＋新增更新规划”的方式。实际依赖 [Zzqy-yi/firmware-image-toolkit@0.1.0](https://github.com/Zzqy-yi/moonbit-firmware-image)（Apache-2.0），由其提供 HEX／SREC 解析、稀疏镜像及 CRC；不将这些已有能力计为新增贡献。MoonFirmware 新增基于旧内容的扇区重建、NOR 位转换与擦除决策、完整编程单元保护检查、设备基线前置校验和操作序列模拟。旧版转换命令保留兼容，向量静态检查和等长页规划不再作为本次独立贡献的主体。
+项目属于基于开源库的原创扩展，非源码移植。采用“复用开源基础＋新增更新规划”的方式。实际依赖 [Zzqy-yi/firmware-image-toolkit@0.1.0](https://github.com/Zzqy-yi/moonbit-firmware-image)（Apache-2.0），由其提供 HEX／SREC 解析、稀疏镜像及 CRC；不将这些已有能力计为新增贡献。MoonFirmware 新增基于旧内容的扇区重建、NOR 位转换与擦除决策、完整编程单元保护检查、设备基线前置校验和操作序列模拟。旧版转换命令保留兼容，向量静态检查和等长页规划不再作为本次独立贡献的主体。
 
 ## 三个完整使用场景
 
@@ -22,4 +22,4 @@
 
 已实现版本化 JSON 目标配置、非等长扇区规划、可行时免擦除编程、未更新字节保留、保护区／编程粒度校验、前置检查和 NOR 操作模拟；提供 Library API、`plan-update` CLI、含前后字节证据的确定性 JSON 清单，以及正反案例和 CI。当前 286 项测试通过；源码、测试和原创样例均开源，许可证 Apache-2.0。工具不连接硬件，不宣称断电原子更新或签名认证；配置与快照由调用方提供，具体芯片的 ECC、重复编程等限制需另行适配。
 
-补充材料：[新增贡献及复审回应](RESUBMISSION_RESPONSE.md) · [案例与验收结果](UPDATE_PLAN_CASES.md)。
+补充材料：[新增贡献及复审回应](https://github.com/SongYZZZ/moon-firmware/blob/main/docs/RESUBMISSION_RESPONSE.md) · [案例与验收结果](https://github.com/SongYZZZ/moon-firmware/blob/main/docs/UPDATE_PLAN_CASES.md)。

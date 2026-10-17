@@ -42,3 +42,6 @@ $null = Invoke-UpdateCase 'unknown-baseline' 'incomplete-baseline.hex' 'erase-ov
 $null = Invoke-UpdateCase 'checksum-error' 'baseline.hex' '../bad_checksum.hex' 'target.json' 2 'InputFormat'
 $caseResults | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'summary.json') -Encoding utf8
 $caseResults | ForEach-Object { Write-Output ("PASS {0}: exit={1}, status={2}, code={3}" -f $_.case, $_.exit, $_.status, $_.code) }
+# Expected refusal cases return nonzero native codes. After all assertions
+# passed, do not leak the last native code into a CI shell's exit handling.
+exit 0

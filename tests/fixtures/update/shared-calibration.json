@@ -22,25 +22,25 @@
   "writable": [
     {
       "name": "application",
-      "end_exclusive": "0x08014000",
-      "start": "0x08004000"
+      "start": "0x08004000",
+      "end_exclusive": "0x08014000"
     }
   ],
   "protected": [
     {
       "name": "boot",
-      "end_exclusive": "0x08004000",
-      "start": "0x08000000"
+      "start": "0x08000000",
+      "end_exclusive": "0x08004000"
     },
     {
       "name": "calibration",
-      "end_exclusive": "0x08018000",
-      "start": "0x08014000"
+      "start": "0x08014000",
+      "end_exclusive": "0x08018000"
     },
     {
       "name": "shared-calibration",
-      "end_exclusive": "0x08014000",
-      "start": "0x08013FF0"
+      "start": "0x08013FF0",
+      "end_exclusive": "0x08014000"
     }
   ],
   "max_plan_bytes": 131072

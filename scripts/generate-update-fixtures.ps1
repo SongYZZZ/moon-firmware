@@ -48,19 +48,19 @@ $targetProfile = [ordered]@{
     name = 'synthetic-nor-16k-64k-16k'
     program_unit = 8
     sectors = @(
-        @{ name = 'boot'; start = '0x08000000'; size = 16384 },
-        @{ name = 'application'; start = '0x08004000'; size = 65536 },
-        @{ name = 'calibration'; start = '0x08014000'; size = 16384 }
+        [ordered]@{ name = 'boot'; start = '0x08000000'; size = 16384 },
+        [ordered]@{ name = 'application'; start = '0x08004000'; size = 65536 },
+        [ordered]@{ name = 'calibration'; start = '0x08014000'; size = 16384 }
     )
-    writable = @(@{ name = 'application'; start = '0x08004000'; end_exclusive = '0x08014000' })
+    writable = @([ordered]@{ name = 'application'; start = '0x08004000'; end_exclusive = '0x08014000' })
     protected = @(
-        @{ name = 'boot'; start = '0x08000000'; end_exclusive = '0x08004000' },
-        @{ name = 'calibration'; start = '0x08014000'; end_exclusive = '0x08018000' }
+        [ordered]@{ name = 'boot'; start = '0x08000000'; end_exclusive = '0x08004000' },
+        [ordered]@{ name = 'calibration'; start = '0x08014000'; end_exclusive = '0x08018000' }
     )
     max_plan_bytes = 131072
 }
 [IO.File]::WriteAllText((Join-Path $fixtureDirectory 'target.json'), ($targetProfile | ConvertTo-Json -Depth 8) + "`n", [Text.UTF8Encoding]::new($false))
 $targetProfile.name = 'synthetic-nor-shared-calibration'
-$targetProfile.protected += @{ name = 'shared-calibration'; start = '0x08013FF0'; end_exclusive = '0x08014000' }
+$targetProfile.protected += [ordered]@{ name = 'shared-calibration'; start = '0x08013FF0'; end_exclusive = '0x08014000' }
 [IO.File]::WriteAllText((Join-Path $fixtureDirectory 'shared-calibration.json'), ($targetProfile | ConvertTo-Json -Depth 8) + "`n", [Text.UTF8Encoding]::new($false))
 Write-Output 'Generated original 96 KiB baseline and update safety fixtures.'

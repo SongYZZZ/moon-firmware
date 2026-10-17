@@ -6,3 +6,6 @@ moon.pkg text eol=lf
 *.md text eol=lf
 *.hex text eol=lf
 *.srec text eol=lf
+*.ps1 text eol=lf
+*.json text eol=lf
+NOTICE text eol=lf
