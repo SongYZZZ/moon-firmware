@@ -1,0 +1,6 @@
+import {
+  "SongYZZZ/moon-firmware/update" @planner,
+  "Zzqy-yi/firmware-image-toolkit" @image,
+}
+
+pkgtype(kind: "executable")

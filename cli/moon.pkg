@@ -4,6 +4,8 @@ import {
   "SongYZZZ/moon-firmware/firmware",
   "SongYZZZ/moon-firmware/srec",
   "SongYZZZ/moon-firmware/validation",
+  "SongYZZZ/moon-firmware/update",
+  "moonbitlang/core/encoding/utf8",
   "moonbitlang/async/fs",
   "moonbitlang/async/stdio",
   "moonbitlang/core/env",

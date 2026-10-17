@@ -1,0 +1,42 @@
+{
+  "schema": "moonfirmware.target.v1",
+  "name": "synthetic-nor-16k-64k-16k",
+  "program_unit": 8,
+  "sectors": [
+    {
+      "name": "boot",
+      "start": "0x08000000",
+      "size": 16384
+    },
+    {
+      "name": "application",
+      "start": "0x08004000",
+      "size": 65536
+    },
+    {
+      "name": "calibration",
+      "start": "0x08014000",
+      "size": 16384
+    }
+  ],
+  "writable": [
+    {
+      "name": "application",
+      "end_exclusive": "0x08014000",
+      "start": "0x08004000"
+    }
+  ],
+  "protected": [
+    {
+      "name": "boot",
+      "end_exclusive": "0x08004000",
+      "start": "0x08000000"
+    },
+    {
+      "name": "calibration",
+      "end_exclusive": "0x08018000",
+      "start": "0x08014000"
+    }
+  ],
+  "max_plan_bytes": 131072
+}

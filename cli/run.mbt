@@ -2,12 +2,13 @@
 /// Execute a validated request. Protocol and image operations stay in libraries.
 pub async fn run(request : Request) -> Int {
   match request {
+    PlanUpdate(request) => run_update(request)
     Help(command) => {
       @stdio.stdout.write(help(command))
       0
     }
     Version => {
-      @stdio.stdout.write("moon-firmware 0.1.0\n")
+      @stdio.stdout.write("moon-firmware 0.2.0\n")
       0
     }
     Run(config) => {

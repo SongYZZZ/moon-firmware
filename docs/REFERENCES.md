@@ -24,6 +24,8 @@ MoonFirmware 依据公开格式说明独立实现，没有复制其他语言 Int
 
 ## 依赖与许可证
 
+- `Zzqy-yi/firmware-image-toolkit@0.1.0`：<https://github.com/Zzqy-yi/moonbit-firmware-image>，Apache-2.0。0.2.0 更新安全路径实际调用其 HEX／SREC 解析、稀疏镜像读写及 CRC-32；通过 Mooncakes 获取，没有复制或 vendoring 源文件。其版权提示保留在根目录 `NOTICE`。旧版仅调研的描述只适用于 0.1.x。
+
 - `moonbitlang/async@0.21.2`：CLI 原生异步文件 IO。Mooncakes package 中声明的许可证为 Apache-2.0。
 - `moonbitlang/x@0.5.1`：原生退出码与系统接口。Mooncakes package 中声明的许可证为 Apache-2.0。
 - MoonBit core：编译器随附标准库，许可证见其官方发行内容。

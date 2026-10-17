@@ -1,5 +1,7 @@
 # 可运行应用场景
 
+> 以下为原有 0.1.x 兼容功能场景。十月复审的三个新增场景及证据以 [UPDATE_PLAN_CASES](UPDATE_PLAN_CASES.md) 为准。
+
 以下命令均在 2026-09-10 使用仓库内 MoonBit 工具链与原创最小 fixture 实际执行。示例模拟 64 KiB Flash、64 KiB RAM 和 1 KiB 擦除页的 Cortex-M 目标，不对应某个具体量产芯片型号。
 
 ## 场景一：单一应用发布门禁

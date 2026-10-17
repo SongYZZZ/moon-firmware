@@ -1,12 +1,35 @@
 # MoonFirmware
 
-MoonFirmware 是用 MoonBit 独立实现的 MCU 固件发布验证工具库与原生 CLI。它读取 Intel HEX、Motorola S-Record 和 BIN，在统一的稀疏地址空间中完成格式校验、镜像装配、地址级 diff、Cortex-M 发布门禁与烧录页计划。
+MoonFirmware 是基于既有镜像库构建的 NOR Flash 更新安全规划工具库与原生 CLI。0.2.0 的核心输入是旧设备快照、稀疏更新镜像和目标合同，输出经过离线模拟的擦除／编程／校验计划，重点处理未修改字节保留、非等长扇区、保护区连带擦除及旧基线不一致。
 
-作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　版本：0.1.3
+作者：宋永振（[SongYZZZ](https://github.com/SongYZZZ)）　许可证：Apache-2.0　源码版本：0.2.0
 
-[English README](README_EN.md) · [报名申请书](docs/HACKATHON_APPLICATION.md) · [应用场景](docs/APPLICATION_SCENARIOS.md) · [成熟工具对照](docs/COMPATIBILITY_REPORT.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md) · [设计](docs/DESIGN.md)
+[English README](README_EN.md) · [十月报名申请书](docs/HACKATHON_APPLICATION.md) · [复审补充说明](docs/RESUBMISSION_RESPONSE.md) · [更新案例与验收](docs/UPDATE_PLAN_CASES.md) · [既有项目边界](docs/PRIOR_ART_AND_BOUNDARY.md)
 
-## 它解决什么问题
+## 0.2.0：复用镜像库后的新增贡献
+
+更新路径实际依赖 [`Zzqy-yi/firmware-image-toolkit@0.1.0`](https://github.com/Zzqy-yi/moonbit-firmware-image)（Apache-2.0），调用其 HEX／SREC parser、稀疏镜像和 CRC。新入口不使用本仓库旧解析器；原有格式／合并／转换 API 保留兼容，不作为本次参赛新增贡献。
+
+新增 `SongYZZZ/moon-firmware/update` 提供：
+
+- 版本化 JSON 目标合同：非等长擦除扇区、编程单元、可写区与保护区。
+- 基于旧快照重建受影响扇区，保留更新中未出现的字节；未知旧内容不能假定为 `0xFF`。
+- 根据 NOR 0→1 位变化决定是否擦除；仅清位的更新可以免擦除。
+- 检查整个擦除扇区及对齐编程单元，拒绝触碰保护区或越出可写范围。
+- 在首次模拟写入前检查全部受影响扇区的前置内容，再回放并核对最终字节。
+- 输出确定性 JSON 操作清单，含完整前后字节、CRC、操作顺序和统计。
+
+```powershell
+moon update
+moon run cmd/moon-firmware -- plan-update tests/fixtures/update/baseline.hex tests/fixtures/update/erase-overlay.hex --profile tests/fixtures/update/target.json
+moon run examples/update
+moon build --release
+pwsh -File scripts/review-update.ps1
+```
+
+原创 16／64／16 KiB 案例只改动应用扇区 1 字节，验证其余 65,535 字节保留；共享校准区擦除、旧基线过期和缺失旧内容均被拒绝。完整说明见[案例](docs/UPDATE_PLAN_CASES.md)。工具是主机侧通用 NOR 模型，不连接硬件；快照可靠性、具体芯片 ECC／重复编程限制和断电恢复需调用方另行处理。0.2.0 新功能以本仓库源码为准；已发布的 0.1.x 包不包含更新规划器。
+
+## 原有格式与静态检查功能（兼容接口）
 
 HEX 和 SREC 不是普通的十六进制文本：每条记录都带地址、类型、长度和 checksum，镜像还可能分布在相距很远的 flash 区域。MoonFirmware 将记录恢复为 `FirmwareImage`，因此能够发现地址冲突和空洞，并在格式转换时保留真正的地址与入口点语义。
 
@@ -39,7 +62,7 @@ Erase value: 0xFF
 
 bootloader＋application 装配和 OTA 地址差异的完整可运行流程见[应用场景](docs/APPLICATION_SCENARIOS.md)。
 
-## 已实现功能
+## 原有接口支持范围
 
 - Intel HEX：00、01、02、03、04、05，全记录 checksum、HEX86 段地址回绕、跨 64 KiB 线性地址切换、确定性 writer。
 - Motorola S-Record：S0、S1、S2、S3、S5、S6、S7、S8、S9，独立 checksum、计数与终止记录校验、地址宽度自动选择。
@@ -189,7 +212,7 @@ moon bench --release benchmarks
 moon package --list
 ```
 
-当前本地结果：241 个测试入口全部通过；其中包含数百组固定 seed 生成用例。覆盖工具报告 1,537／2,018 个可插桩点命中（76.16%）。性能数字与环境见 [BENCHMARKS.md](docs/BENCHMARKS.md)。CI 在 Ubuntu native 环境运行 format、check、test、API 检查、build 和 release-gate smoke test。
+当前本地结果：286 个测试入口全部通过，新增更新规划测试包含 64 组生成用例、3,072 次最终字节断言；另有 7 项真实更新 CLI 案例。CI 在 Ubuntu native 环境执行标准质量门、原有 release gate 和更新案例脚本。0.1.x 的历史覆盖率及性能数字见旧报告，不代表 0.2.0 的覆盖率或性能结论。
 
 ## 项目结构
 
@@ -200,6 +223,7 @@ ihex/        Intel HEX record、parser、writer、checksum
 srec/        Motorola S-Record codec
 firmware/    检测、转换、merge、extract、diff、inspect
 validation/  目标布局与 flash page plan
+update/      上游镜像库之上的 NOR 更新安全规划、配置与模拟
 analysis/    镜像 checksum、搜索、word 与 Cortex-M 分析
 cli/         参数、文件 IO、命令执行
 cmd/         moon-firmware 原生入口
@@ -211,7 +235,7 @@ docs/        设计、格式、测试、参考与实测记录
 
 ## Mooncakes 包元数据
 
-`moon.mod` 中已填写模块名、版本、仓库、许可证、描述、关键词和 README。MoonFirmware 发布于 Mooncakes；安装命令为 `moon add SongYZZZ/moon-firmware`。请在包页面查看可用版本与下载信息：[Mooncakes 包页面](https://mooncakes.io/docs/SongYZZZ/moon-firmware)。
+`moon.mod` 中已填写模块名、版本、仓库、许可证、描述、关键词和 README。已发布版本为 0.1.x；0.2.0 更新规划器目前通过仓库源码使用，尚未发布。`moon add SongYZZZ/moon-firmware` 获取的是已发布版本，见 [Mooncakes 包页面](https://mooncakes.io/docs/SongYZZZ/moon-firmware)。
 
 ## 兼容性与限制
 
@@ -221,8 +245,8 @@ docs/        设计、格式、测试、参考与实测记录
 - 当前仓库 fixture 均根据公开格式资料原创。IntelHex 2.3.0 与 bincopy 20.1.1 的实测结果见 [COMPATIBILITY_REPORT.md](docs/COMPATIBILITY_REPORT.md)；有限样例通过不代表兼容全部供应商方言。
 - 文件写入采用同目录临时文件、`sync` 与 rename；未提供目录 `fsync` 的断电事务保证，也不检测同长度并发改写。
 
-路线图包括：使用 SRecord／objcopy 扩展兼容矩阵、多 block S-Record、可选 target profile 文件、流式超大文件输入，以及在 MoonBit 多后端 IO 成熟后拆分可移植 CLI。当前限制和明确不支持项以 [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) 为准。
+路线图包括：使用 SRecord／objcopy 扩展兼容矩阵、多 block S-Record、旧 gate 命令的 target profile 文件、流式超大文件输入，以及在 MoonBit 多后端 IO 成熟后拆分可移植 CLI。当前限制和明确不支持项以 [FORMAT_SUPPORT.md](docs/FORMAT_SUPPORT.md) 为准。
 
 ## 参与开发
 
-请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [SECURITY.md](SECURITY.md)。实现依据公开格式规范独立编写，没有复制其他语言库代码；参考资料和依赖许可证见 [REFERENCES.md](docs/REFERENCES.md)。变更记录见 [CHANGELOG.md](CHANGELOG.md)。
+请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [SECURITY.md](SECURITY.md)。旧格式实现依据公开规范编写；0.2.0 更新路径实际复用上游镜像库。来源和许可证见 [REFERENCES.md](docs/REFERENCES.md) 与 [NOTICE](NOTICE)。变更记录见 [CHANGELOG.md](CHANGELOG.md)。

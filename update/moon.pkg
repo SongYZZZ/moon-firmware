@@ -1,0 +1,6 @@
+import {
+  "Zzqy-yi/firmware-image-toolkit" @image,
+  "SongYZZZ/moon-firmware/codec",
+  "moonbitlang/core/json",
+  "moonbitlang/core/debug",
+}

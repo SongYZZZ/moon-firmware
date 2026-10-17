@@ -1,5 +1,13 @@
 # MoonFirmware
 
+## 0.2.0 update safety workflow
+
+The October resubmission focuses on **NOR update safety planning**, built on the actual Mooncakes dependency `Zzqy-yi/firmware-image-toolkit@0.1.0` (Apache-2.0). Upstream provides HEX/SREC parsing, sparse image operations and CRC. New `update` APIs and `plan-update` CLI add nonuniform erase sectors, sparse-overlay preservation, NOR erase decisions, protected-operation boundaries, byte-exact preimage checks and offline simulation.
+
+Run `moon run examples/update`, then `moon build --release` and `pwsh -File scripts/review-update.ps1`. The original 16/64/16 KiB fixtures verify preservation of 65,535 bytes for a one-byte change, and refusal of protected collateral erase, stale snapshots and unknown baseline contents. See [resubmission scope](docs/RESUBMISSION_RESPONSE.md), [cases](docs/UPDATE_PLAN_CASES.md), and [NOTICE](NOTICE).
+
+This is an offline generic NOR model, not a hardware programmer. Device snapshots, ECC/reprogramming constraints and power-failure recovery require external integration. Version 0.2.0 is currently source-only; published 0.1.x packages do not contain this planner. The sections below describe the retained legacy compatibility APIs and their historical results.
+
 MoonFirmware is an MCU firmware release-validation library and native CLI independently implemented in MoonBit. It reads Intel HEX, Motorola S-Record, and BIN artifacts, then performs format validation, image assembly, address-aware diff, Cortex-M release gates, and flash-page planning in one sparse address model.
 
 Author: 宋永振 ([SongYZZZ](https://github.com/SongYZZZ)) · License: Apache-2.0 · Version: 0.1.3

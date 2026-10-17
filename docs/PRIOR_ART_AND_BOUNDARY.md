@@ -1,5 +1,13 @@
 # 既有项目核查与互补边界
 
+## 2026-10-17：初审后范围调整
+
+初审认为原有向量检查和等长页计划不足以形成独立范围，本次接受该判断。0.2.0 实际依赖 `Zzqy-yi/firmware-image-toolkit@0.1.0`，使用上游 HEX／SREC、稀疏镜像和 CRC。新增范围是基于旧设备内容的 NOR 更新安全规划、非等长扇区恢复、保护区与编程粒度检查、前置核验和操作模拟。
+
+以下 2026-09-12 对照表仅为历史记录，不作为 0.2.0 的独立性结论。新的责任划分与复现证据以 [复审补充说明](RESUBMISSION_RESPONSE.md) 和 [更新案例](UPDATE_PLAN_CASES.md) 为准；旧转换／合并功能保留兼容，不计为新增贡献。
+
+## 0.1.x 历史调研
+
 本文记录 MoonFirmware 的既有项目调研、功能边界与取舍。核查日期为 2026-09-12，比较对象为 [`Zzqy-yi/moonbit-firmware-image`](https://github.com/Zzqy-yi/moonbit-firmware-image)。该仓库创建于 2026-08-10，默认分支为 `master`；本页只陈述核查日公开 README、目录与接口能够支持的结论。
 
 ## 共同基础

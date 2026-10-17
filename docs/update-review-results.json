@@ -1,0 +1,44 @@
+[
+  {
+    "case": "preserve-sector",
+    "exit": 0,
+    "status": "accepted",
+    "code": null
+  },
+  {
+    "case": "program-without-erase",
+    "exit": 0,
+    "status": "accepted",
+    "code": null
+  },
+  {
+    "case": "srec-upstream-input",
+    "exit": 0,
+    "status": "accepted",
+    "code": null
+  },
+  {
+    "case": "protected-collateral",
+    "exit": 1,
+    "status": "rejected",
+    "code": "ProtectedErase"
+  },
+  {
+    "case": "stale-device",
+    "exit": 1,
+    "status": "rejected",
+    "code": "StaleBaseline"
+  },
+  {
+    "case": "unknown-baseline",
+    "exit": 1,
+    "status": "rejected",
+    "code": "MissingBaseline"
+  },
+  {
+    "case": "checksum-error",
+    "exit": 2,
+    "status": "rejected",
+    "code": "InputFormat"
+  }
+]

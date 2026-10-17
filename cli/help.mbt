@@ -2,8 +2,12 @@
 /// Command-specific help is also the source of truth for CLI syntax.
 pub fn help(command : String) -> String {
   let out = StringBuilder()
-  out.write_string("MoonFirmware 0.1.0 - addressed firmware image toolkit\n\n")
+  out.write_string("MoonFirmware 0.2.0 - NOR update safety planning\n\n")
   match command {
+    "plan-update" =>
+      out.write_string(
+        "Usage: moon-firmware plan-update BASELINE OVERLAY --profile TARGET.json [--observed DEVICE.hex] [--json] [-o PLAN.json] [--force]\nReuse firmware-image-toolkit for HEX/SREC; plan and simulate a sparse NOR update.\nRequire complete baseline bytes in each affected sector. Omitted overlay bytes are preserved.\nReject protected erase/program units and stale observed contents. Policy refusal exits 1; input/profile/IO errors exit 2.\n",
+      )
     "inspect" =>
       out.write_string(
         "Usage: moon-firmware inspect INPUT [--json]\nShow address bounds, payload, segments, gaps, entry and record counts.\n",
@@ -34,11 +38,17 @@ pub fn help(command : String) -> String {
       )
     _ =>
       out.write_string(
-        "Usage: moon-firmware COMMAND [OPTIONS]\nCommands: inspect, verify, convert, merge, extract, diff, gate\nUse COMMAND --help for details.\n",
+        "Usage: moon-firmware COMMAND [OPTIONS]\nCommands: inspect, verify, convert, merge, extract, diff, gate, plan-update\nUse COMMAND --help for details.\n",
       )
   }
+  if command == "plan-update" {
+    out.write_string(
+      "\nInputs: HEX/SREC text parsed by firmware-image-toolkit. Profile addresses are strings and ranges use exclusive ends.\n-- stops option parsing. --help / -h shows help.\n",
+    )
+    return out.to_string()
+  }
   out.write_string(
-    "\nInput options:\n  --input-format hex|srec|bin   Hint for ambiguous input (signature wins)\n  --base-address ADDRESS      Required for BIN input\n  --permissive                Documented tolerances, checksum still mandatory\n  --overlap reject|identical|overwrite\n",
+    "\nLegacy input options (plan-update has its own options):\n  --input-format hex|srec|bin   Hint for ambiguous input (signature wins)\n  --base-address ADDRESS      Required for BIN input\n  --permissive                Documented tolerances, checksum still mandatory\n  --overlap reject|identical|overwrite\n",
   )
   if command == "" || ["convert", "merge", "extract"].contains(command) {
     out.write_string(

@@ -21,6 +21,7 @@ pub(all) enum Request {
   Help(String)
   Version
   Run(Config)
+  PlanUpdate(UpdateRequest)
 }
 
 ///|
@@ -78,6 +79,9 @@ pub fn parse_arguments(
     return Help("")
   }
   let command = args[0]
+  if command == "plan-update" {
+    return parse_update_arguments(args)
+  }
   if !["inspect", "verify", "convert", "merge", "extract", "diff", "gate"].contains(
       command,
     ) {

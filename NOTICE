@@ -1,0 +1,16 @@
+MoonFirmware
+Copyright 2026 宋永振
+
+The update safety workflow depends on:
+  Zzqy-yi/firmware-image-toolkit 0.1.0
+  https://github.com/Zzqy-yi/moonbit-firmware-image
+  Apache License 2.0
+
+Upstream notice:
+  MoonBit Firmware Image Toolkit
+  Copyright 2026 张泉义
+
+The dependency provides firmware record codecs, sparse image operations and
+CRC helpers. MoonFirmware adds target policy, NOR sector update planning,
+protection checks, preimage validation and offline simulation. Upstream code
+is obtained through Mooncakes; it is not copied or vendored in this repository.

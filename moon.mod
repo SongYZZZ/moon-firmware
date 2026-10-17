@@ -1,6 +1,6 @@
 name = "SongYZZZ/moon-firmware"
 
-version = "0.1.3"
+version = "0.2.0"
 
 readme = "README.md"
 
@@ -14,15 +14,18 @@ keywords = [
   "srecord",
   "cortex-m",
   "release-validation",
+  "nor-flash",
+  "update-planning",
 ]
 
 preferred_target = "native"
 
 supported_targets = "native"
 
-description = "MCU firmware release validation: HEX, S-record, Cortex-M gates and flash plans"
+description = "NOR update safety planning on firmware-image-toolkit: sector preservation, protection and preimage checks"
 
 import {
   "moonbitlang/x@0.5.1",
   "moonbitlang/async@0.21.2",
+  "Zzqy-yi/firmware-image-toolkit@0.1.0",
 }
